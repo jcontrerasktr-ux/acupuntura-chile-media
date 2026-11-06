@@ -39,3 +39,6 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 
 ## Videos propios de Julio
 Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
+
+## Contenido ya preparado y mostrado a Julio
+- **Reel del miércoles 11 de noviembre de 2026:** ya está generado en `media/2026-11-11-primera-sesion/` (`reel.mp4`, `portada.jpg`, `caption.txt`, tema `primera-sesion`). En esa ejecución NO generar otro: comprobar la URL, publicar exactamente ese Reel con ese texto (pasos 6 a 9) y registrarlo en el historial. Si Julio pidió cambios antes, estarán reflejados en esa carpeta.
