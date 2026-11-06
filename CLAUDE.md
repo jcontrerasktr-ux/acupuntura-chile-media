@@ -33,6 +33,12 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 8. Registrar en `plan/historial.json` (fecha, tipo, id_tema, resultado), commit y push.
 9. Enviar a Julio un resumen corto con `SendUserMessage`: qué se publicó, el texto y el resultado. Si algo falla, explicarlo y no reintentar más de una vez.
 
+## Reel ilustrado (educativo, alterna con el de puntos)
+- Formato: dibujos animados propios + subtítulo palabra por palabra + voz. Herramienta: `python3 tools/make_reel_ilustrado.py spec.json reel.mp4 portada.jpg` (ejemplo en `plan/ejemplos/ilustrado-columna.json`; ilustraciones: columna, movimiento, meridianos, cierre).
+- Contenido desde las tres miradas de la clínica: medicina china, kinesiología y quiropraxia. Explicar con datos de anatomía o conceptos de la tradición ("según la medicina china…"), sin cifras de efectividad ni promesas.
+- Alternar: semana con Reel de puntos (`make_reel.py`) y semana con Reel ilustrado. Julio debe aprobar el primero antes de publicarlo.
+- Inspiración: formatos de otras cuentas (ilustración animada, subtítulos que resaltan la palabra). Jamás copiar sus dibujos, textos ni videos.
+
 ## Voz del Reel
 - Julio eligió voz sintética en español neutro (no chileno). Todos los Reels llevan `"voz": true` y `"voz_id": 28` (mujer) en el spec; la narración lee gancho, puntos y cierre (`narracion()` en `tools/make_reel.py`).
 - Si Julio envía su propia grabación, usarla en vez de la sintética.
