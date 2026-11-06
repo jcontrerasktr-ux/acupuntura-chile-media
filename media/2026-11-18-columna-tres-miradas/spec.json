@@ -1,0 +1,48 @@
+{
+  "tag": "QUIROPRAXIA · KINESIOLOGÍA · MEDICINA CHINA",
+  "hook": "¿Sabías que tu columna tiene *33* vértebras?",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "escenas": [
+    {
+      "voz": "¿Sabías que tu columna tiene 33 vértebras? Cada una se mueve, y todas trabajan juntas.",
+      "ilu": "columna",
+      "regiones": [
+        [
+          "7 cervicales",
+          0,
+          6
+        ],
+        [
+          "12 dorsales",
+          7,
+          18
+        ],
+        [
+          "5 lumbares",
+          19,
+          23
+        ]
+      ]
+    },
+    {
+      "voz": "La quiropraxia se enfoca en la columna y las articulaciones.",
+      "ilu": "columna",
+      "etiqueta": "Quiropraxia"
+    },
+    {
+      "voz": "La kinesiología trabaja el movimiento, la fuerza y la postura.",
+      "ilu": "movimiento",
+      "etiqueta": "Kinesiología"
+    },
+    {
+      "voz": "La medicina china mira el cuerpo completo. Habla del qi, que circula por canales llamados meridianos.",
+      "ilu": "meridianos",
+      "etiqueta": "Medicina china"
+    },
+    {
+      "voz": "Cada disciplina aporta algo distinto, y juntas pueden ser un apoyo complementario. Evaluamos tu caso y armamos un plan a tu medida. Agenda tu hora en AcupunturaChile.",
+      "ilu": "cierre"
+    }
+  ]
+}

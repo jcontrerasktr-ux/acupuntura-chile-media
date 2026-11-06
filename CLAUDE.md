@@ -35,7 +35,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 
 ## Reel ilustrado (educativo, alterna con el de puntos)
 - Formato: dibujos animados propios + subtítulo palabra por palabra + voz. Herramienta: `python3 tools/make_reel_ilustrado.py spec.json reel.mp4 portada.jpg` (ejemplo en `plan/ejemplos/ilustrado-columna.json`; ilustraciones: columna, movimiento, meridianos, cierre).
-- Contenido desde las tres miradas de la clínica: medicina china, kinesiología y quiropraxia. Explicar con datos de anatomía o conceptos de la tradición ("según la medicina china…"), sin cifras de efectividad ni promesas.
+- Contenido desde las tres miradas de la clínica: medicina china, kinesiología y quiropraxia. No hace falta que cada Reel hable de todas: la mayoría se centra en UNA terapia (rotar entre ellas) y de vez en cuando uno junta las tres, como el ejemplo. Explicar con datos de anatomía o conceptos de la tradición ("según la medicina china…"), sin cifras de efectividad ni promesas.
 - Alternar: semana con Reel de puntos (`make_reel.py`) y semana con Reel ilustrado. Julio debe aprobar el primero antes de publicarlo.
 - Inspiración: formatos de otras cuentas (ilustración animada, subtítulos que resaltan la palabra). Jamás copiar sus dibujos, textos ni videos.
 
@@ -55,4 +55,5 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
 
 ## Contenido ya preparado y mostrado a Julio
+- **Reel ilustrado del miércoles 18 de noviembre de 2026:** aprobado por Julio y generado en `media/2026-11-18-columna-tres-miradas/` (`reel.mp4`, `portada.jpg`, `caption.txt`). En esa ejecución NO generar otro: publicar exactamente ese Reel (pasos 6 a 9). Desde el 25 de noviembre, alternar formato y centrar cada Reel ilustrado en una sola terapia.
 - **Reel del miércoles 11 de noviembre de 2026:** ya está generado en `media/2026-11-11-primera-sesion/` (`reel.mp4` con voz neutra ya incluida, `portada.jpg`, `caption.txt`, tema `primera-sesion`). En esa ejecución NO generar otro: comprobar la URL, publicar exactamente ese Reel con ese texto (pasos 6 a 9) y registrarlo en el historial. Si Julio pidió cambios antes, estarán reflejados en esa carpeta.
