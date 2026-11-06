@@ -54,6 +54,49 @@ def halo(dyn, r=14, k=0.9):
     return Image.alpha_composite(g, dyn)
 
 
+
+SKIN_L = (244, 208, 180)
+SKIN_D = (176, 122, 98)
+BONE_L = (240, 231, 214)
+BONE_D = (196, 178, 152)
+_BASES = {}
+
+
+def mask_new():
+    return Image.new("L", (CW * SS, CH * SS), 0)
+
+
+def mline(dm, pts, w, v=255):
+    dm.line([sp(q) for q in pts], fill=v, width=int(w * SS), joint="curve")
+    for q in (pts[0], pts[-1]):
+        r, (x, y) = w * SS / 2, sp(q)
+        dm.ellipse((x - r, y - r, x + r, y + r), fill=v)
+
+
+def shaded(mask, light=SKIN_L, dark=SKIN_D, r=26):
+    """Rellena una silueta con degradado: bordes más oscuros, centro claro y luz desde arriba a la izquierda."""
+    m = np.asarray(mask, dtype=np.float32) / 255
+    b = np.asarray(mask.filter(ImageFilter.GaussianBlur(r * SS)), dtype=np.float32) / 255
+    k = np.clip((b - 0.18) / 0.62, 0, 1)
+    h, w = m.shape
+    yy, xx = np.mgrid[0:h, 0:w].astype(np.float32)
+    lit = 0.90 + 0.20 * ((1 - yy / h) * 0.55 + (1 - xx / w) * 0.45)
+    col = np.array(dark, np.float32) + (np.array(light, np.float32) - np.array(dark, np.float32)) * k[..., None]
+    col = np.clip(col * lit[..., None], 0, 255)
+    return Image.fromarray(np.dstack([col, m * 255]).astype(np.uint8), "RGBA")
+
+
+def soft(base, drawfn, blur=10):
+    """Dibuja una sombra o brillo difuminado sobre la capa base."""
+    lay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    drawfn(ImageDraw.Draw(lay))
+    lay = lay.filter(ImageFilter.GaussianBlur(blur * SS))
+    # no se sale de la silueta
+    a = np.minimum(np.asarray(lay.getchannel("A")), np.asarray(base.getchannel("A")))
+    lay.putalpha(Image.fromarray(a))
+    base.alpha_composite(lay)
+
+
 def thick(d, pts, w, fill):
     d.line([sp(p) for p in pts], fill=fill, width=int(w * SS), joint="curve")
     for p in (pts[0], pts[-1]):
@@ -124,7 +167,7 @@ def ilu_columna(t, lt, sc):
     # sacro y cóccix
     sx, sy = vertebra_xy(23)
     sac = [(sx - 50 + sway, sy + 22), (sx + 50 + sway, sy + 22), (sx + 30 + sway, sy + 112), (sx + sway, sy + 138), (sx - 24 + sway, sy + 100)]
-    d.polygon([sp(p) for p in sac], fill=BODY_L + (255,), outline=LINE + (255,))
+    d.polygon([sp(p) for p in sac], fill=BONE_D + (255,), outline=BONE_L + (255,))
     # vértebras
     for i in range(24):
         x, y = vertebra_xy(i)
@@ -133,12 +176,13 @@ def ilu_columna(t, lt, sc):
         lit = a <= i <= b
         if wave:
             lit = lit and abs(i - pos) < 3.2
-        fill = YEL if lit else BODY_L
+        fl, fd = (YEL, (214, 158, 20)) if lit else (BONE_L, BONE_D)
         # apófisis espinosa (hacia atrás)
-        thick(d, [(x - w / 2, y), (x - w / 2 - 30, y + 7)], 8, (SOFT if not lit else YEL) + (255,))
-        d.rounded_rectangle((sp((x - w / 2, y - 10)), sp((x + w / 2, y + 10))), 8 * SS, fill=fill + (255,), outline=LINE + (255,), width=2 * SS)
+        thick(d, [(x - w / 2, y), (x - w / 2 - 30, y + 7)], 8, (fd if lit else BONE_D) + (255,))
+        d.rounded_rectangle((sp((x - w / 2, y - 10)), sp((x + w / 2, y + 10))), 8 * SS, fill=fd + (255,))
+        d.rounded_rectangle((sp((x - w / 2 + 2, y - 10)), sp((x + w / 2 - 2, y + 4))), 8 * SS, fill=fl + (255,))
         if i < 23:   # disco
-            d.ellipse((sp((x - w / 2 + 8, y + 10)), sp((x + w / 2 - 8, y + 17))), fill=(190, 220, 240, 150))
+            d.ellipse((sp((x - w / 2 + 8, y + 10)), sp((x + w / 2 - 8, y + 17))), fill=(120, 175, 210, 200))
     out = Image.alpha_composite(im, halo(dyn))
     od = ImageDraw.Draw(out)
     if name:
@@ -167,13 +211,17 @@ def ilu_movimiento(t, lt, sc):
     # suelo
     d.line([sp((120, ground + 26)), sp((680, ground + 26))], fill=SOFT + (200,), width=4 * SS)
     # extremidad trasera (más tenue) y delantera
-    for col, dx in (((90, 130, 160), -34), ((236, 244, 250), 0)):
-        thick(d, [(ankle[0] + dx, ankle[1]), (knee[0] + dx, knee[1]), (hip[0] + dx, hip[1])], 30, col + (255,))
-    thick(d, [hip, sho], 44, LINE + (255,))
-    thick(d, [sho, elbow, hand], 24, LINE + (255,))
+    def limb(pts, w, base, hi):
+        thick(d, pts, w, base + (255,))
+        thick(d, [(q[0] - w * 0.16, q[1] - w * 0.1) for q in pts], w * 0.42, hi + (255,))
+    for base, hi, dx in (((78, 118, 148), (110, 152, 182), -34), ((205, 225, 240), (248, 252, 255), 0)):
+        limb([(ankle[0] + dx, ankle[1]), (knee[0] + dx, knee[1]), (hip[0] + dx, hip[1])], 32, base, hi)
+    limb([hip, sho], 46, (205, 225, 240), (248, 252, 255))
+    limb([sho, elbow, hand], 26, (205, 225, 240), (248, 252, 255))
     r = 54 * SS
     hx, hy = head[0] * SS, head[1] * SS
-    d.ellipse((hx - r, hy - r, hx + r, hy + r), fill=LINE + (255,))
+    d.ellipse((hx - r, hy - r, hx + r, hy + r), fill=(205, 225, 240, 255))
+    d.ellipse((hx - r * 0.65 - 10 * SS, hy - r * 0.7, hx + r * 0.2 - 10 * SS, hy - r * 0.05), fill=(248, 252, 255, 255))
     # articulaciones resaltadas con arco de ángulo en la rodilla
     for p in (hip, knee, ankle):
         r = 15 * SS
@@ -196,7 +244,7 @@ def ilu_movimiento(t, lt, sc):
     words = ["Movimiento", "Fuerza", "Postura"]
     for k, wd in enumerate(words):
         on = int((lt / 3.2 * 3) % 3) == k
-        label(od, wd, 150 + k * 250, 790, fill=YEL if on else (70, 108, 136), fg=TEAL_D if on else (200, 220, 235), size=30)
+        label(od, wd, 150 + k * 250, 760, fill=YEL if on else (70, 108, 136), fg=TEAL_D if on else (200, 220, 235), size=30)
     return out
 
 
@@ -210,30 +258,42 @@ def cuerpo_paths():
     return [smooth_(p) for p in (L, R, AL, AR)]
 
 
+def base_cuerpo():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    dm.ellipse((sp((342, 62)), sp((458, 178))), fill=255)
+    dm.rounded_rectangle((sp((308, 205)), sp((492, 475))), 60 * SS, fill=255)
+    mline(dm, [(376, 180), (424, 180)], 40)
+    for mx in (lambda x: x, lambda x: 800 - x):
+        mline(dm, [(mx(318), 248), (mx(262), 360), (mx(248), 470)], 46)
+        mline(dm, [(mx(360), 450), (mx(352), 590), (mx(346), 722)], 58)
+    base = shaded(m, light=(120, 168, 200), dark=(40, 72, 98), r=20)
+    d = ImageDraw.Draw(base)
+    d.ellipse((sp((342, 62)), sp((458, 178))), outline=(170, 210, 235, 140), width=3 * SS)
+    soft(base, lambda x: x.ellipse((sp((340, 70)), sp((420, 140))), fill=(210, 235, 250, 90)), 14)
+    return base
+
+
 def ilu_meridianos(t, lt, sc):
-    im, dyn = new_canvas(), new_canvas()
-    d, dd = ImageDraw.Draw(im), ImageDraw.Draw(dyn)
-    for grow, col in ((10, BODY_L), (0, BODY)):
-        d.ellipse((sp((342 - grow, 62 - grow)), sp((458 + grow, 178 + grow))), fill=col + (255,))
-        d.rounded_rectangle((sp((308 - grow, 205 - grow)), sp((492 + grow, 475 + grow))), (60 + grow) * SS, fill=col + (255,))
-        thick(d, [(376, 180), (424, 180)], 40 + 2 * grow, col + (255,))
-        for mx in (lambda x: x, lambda x: 800 - x):
-            thick(d, [(mx(318), 248), (mx(262), 360), (mx(248), 470)], 46 + 2 * grow, col + (255,))
-            thick(d, [(mx(360), 450), (mx(352), 590), (mx(346), 722)], 58 + 2 * grow, col + (255,))
-    paths = cuerpo_paths()
-    for p in paths:
-        d.line([sp(q) for q in p], fill=(150, 205, 235, 170), width=3 * SS)
+    if "cuerpo" not in _BASES:
+        _BASES["cuerpo"] = base_cuerpo()
+    im = _BASES["cuerpo"].copy()
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(im)
+    dd2 = ImageDraw.Draw(dyn)
+    for p in cuerpo_paths():
+        dd.line([sp(q) for q in p], fill=(205, 232, 248, 190), width=3 * SS)
         for k in range(4):
             x, y = along(p, (t * 0.28 + k / 4) % 1.0)
             r = 8 * SS
-            dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=YEL + (255,))
+            dd2.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=YEL + (255,))
     pts = [(400, 66), (250, 455), (550, 455), (352, 590), (448, 590), (346, 712), (454, 712), (400, 330)]
     for i, (x, y) in enumerate(pts):
         ph = (lt * 0.9 + i * 0.37) % 1.0
         r = (12 + 34 * ph) * SS
-        dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), outline=YEL + (int(255 * (1 - ph)),), width=4 * SS)
+        dd2.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), outline=YEL + (int(255 * (1 - ph)),), width=4 * SS)
         r0 = 9 * SS
-        dd.ellipse((x * SS - r0, y * SS - r0, x * SS + r0, y * SS + r0), fill=YEL + (255,))
+        dd2.ellipse((x * SS - r0, y * SS - r0, x * SS + r0, y * SS + r0), fill=YEL + (255,))
     out = Image.alpha_composite(im, halo(dyn))
     if sc.get("etiqueta"):
         label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
@@ -250,56 +310,100 @@ PUNTOS = {
 }
 
 
-def zona_cara(d):
-    d.ellipse((sp((205, 130)), sp((595, 640))), fill=BODY + (255,), outline=BODY_L + (255,), width=5 * SS)
+def base_cara():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    dm.ellipse((sp((205, 130)), sp((595, 640))), fill=255)
     for ex in (205, 595):
-        d.ellipse((sp((ex - 28, 340)), sp((ex + 28, 440))), fill=BODY + (255,), outline=BODY_L + (255,), width=4 * SS)
-    for sx in (-1, 1):
-        cx = 400 + sx * 88
-        thick(d, [(cx - 52, 330), (cx - 10 * sx, 306), (cx + 52, 322)] if sx == -1 else [(cx - 52, 322), (cx + 10, 306), (cx + 52, 330)], 9, LINE + (255,))
-        d.ellipse((sp((cx - 32, 346)), sp((cx + 32, 376))), outline=LINE + (255,), width=4 * SS)
-        d.ellipse((sp((cx - 9, 354)), sp((cx + 9, 372))), fill=LINE + (255,))
-    thick(d, [(400, 380), (392, 455), (416, 462)], 5, SOFT + (255,))
-    d.arc((sp((340, 490)), sp((460, 560))), 20, 160, fill=SOFT + (255,), width=5 * SS)
+        dm.ellipse((sp((ex - 30, 340)), sp((ex + 30, 440))), fill=255)
+    dm.rounded_rectangle((sp((330, 570)), sp((470, 790))), 40 * SS, fill=255)
+    base = shaded(m)
+    mh = mask_new()
+    dh = ImageDraw.Draw(mh)
+    dh.ellipse((sp((186, 96)), sp((614, 470))), fill=255)
+    dh.ellipse((sp((228, 188)), sp((572, 540))), fill=0)
+    base.alpha_composite(shaded(mh, light=(104, 76, 64), dark=(38, 26, 24), r=14))
+    d = ImageDraw.Draw(base)
+    soft(base, lambda x: x.ellipse((sp((330, 400)), sp((470, 500))), fill=(150, 100, 80, 90)), 22)   # sombra de nariz
+    for sx in (1, -1):
+        mx = (lambda x: x) if sx == 1 else (lambda x: 800 - x)
+        d.polygon([sp((mx(310), 334)), sp((mx(346), 311)), sp((mx(388), 318)), sp((mx(388), 330)), sp((mx(346), 325)), sp((mx(312), 344))], fill=(62, 42, 34, 255))
+        cx = mx(345)
+        d.ellipse((sp((cx - 36, 347)), sp((cx + 36, 377))), fill=(252, 250, 247, 255))
+        d.ellipse((sp((cx - 12, 349)), sp((cx + 12, 375))), fill=(92, 62, 44, 255))
+        d.ellipse((sp((cx - 5, 358)), sp((cx + 5, 368))), fill=(20, 14, 12, 255))
+        d.ellipse((sp((cx - 9, 352)), sp((cx - 3, 358))), fill=(255, 255, 255, 255))
+        d.arc((sp((cx - 36, 340)), sp((cx + 36, 384))), 200, 340, fill=(80, 52, 42, 255), width=4 * SS)
+    d.line([sp((394, 385)), sp((389, 452))], fill=(200, 146, 120, 200), width=4 * SS)
+    d.arc((sp((372, 440)), sp((428, 480))), 20, 160, fill=(150, 100, 82, 255), width=4 * SS)
+    d.polygon([sp((352, 524)), sp((380, 509)), sp((400, 516)), sp((420, 509)), sp((448, 524)), sp((400, 532))], fill=(190, 100, 102, 255))
+    d.ellipse((sp((362, 524)), sp((438, 558))), fill=(206, 122, 120, 255))
+    return base
 
 
-def zona_mano(d):
-    for grow, col in ((8, BODY_L), (0, BODY)):
-        d.rounded_rectangle((sp((300 - grow, 330 - grow)), sp((520 + grow, 600 + grow))), (70 + grow) * SS, fill=col + (255,))
-        d.rounded_rectangle((sp((332 - grow, 570 - grow)), sp((490 + grow, 705 + grow))), (40 + grow) * SS, fill=col + (255,))
-        for pts, w in (([(338, 380), (338, 175)], 46), ([(402, 360), (402, 125)], 48), ([(464, 380), (464, 165)], 46),
-                       ([(516, 410), (528, 250)], 38), ([(312, 540), (232, 470), (190, 378)], 50)):
-            thick(d, pts, w + 2 * grow, col + (255,))
+def base_mano():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    dm.rounded_rectangle((sp((300, 330)), sp((520, 600))), 70 * SS, fill=255)
+    dm.rounded_rectangle((sp((332, 570)), sp((490, 705))), 40 * SS, fill=255)
+    dedos = [([(338, 380), (338, 175)], 46), ([(402, 360), (402, 125)], 48), ([(464, 380), (464, 165)], 46),
+             ([(516, 410), (528, 250)], 38), ([(312, 540), (232, 470), (190, 378)], 50)]
+    for pts, w in dedos:
+        mline(dm, pts, w)
+    base = shaded(m, r=16)
+    d = ImageDraw.Draw(base)
+    for pts, w in dedos:
+        x, y = pts[-1]
+        d.ellipse((sp((x - w * 0.34, y - 6)), sp((x + w * 0.34, y + 34))), fill=(250, 222, 210, 255), outline=(204, 150, 130, 255), width=2 * SS)
     for x in (338, 402, 464):
-        d.line([sp((x, 420)), sp((x + (6 if x > 400 else -2), 560))], fill=BODY_L + (140,), width=3 * SS)
+        d.line([sp((x - 14, 398)), sp((x + 14, 398))], fill=(190, 136, 112, 200), width=3 * SS)
+        d.line([sp((x - 12, 408)), sp((x + 12, 408))], fill=(190, 136, 112, 120), width=2 * SS)
+        d.line([sp((x, 430)), sp((x + (5 if x > 400 else -3), 575))], fill=(196, 144, 118, 150), width=4 * SS)
+    return base
 
 
-def zona_pierna(d):
-    for grow, col in ((8, BODY_L), (0, BODY)):
-        poly = [(332 - grow, 140), (468 + grow, 140), (486 + grow, 330), (448 + grow, 640), (352 - grow, 640), (314 - grow, 330)]
-        d.polygon([sp(p) for p in smooth(poly, 2)], fill=col + (255,))
-        d.ellipse((sp((320 - grow, 628 - grow)), sp((480 + grow, 715 + grow))), fill=col + (255,))
-    d.ellipse((sp((350, 70)), sp((470, 190))), outline=LINE + (255,), width=4 * SS)
-    d.line([sp((400, 215)), sp((396, 620))], fill=SOFT + (170,), width=4 * SS)
+def base_pierna():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    poly = [(332, 140), (468, 140), (486, 330), (448, 640), (352, 640), (314, 330)]
+    dm.polygon([sp(q) for q in smooth(poly, 2)], fill=255)
+    dm.ellipse((sp((320, 628)), sp((480, 715))), fill=255)
+    base = shaded(m, r=30)
+    d = ImageDraw.Draw(base)
+    soft(base, lambda x: x.ellipse((sp((356, 78)), sp((444, 176))), fill=(255, 238, 222, 120)), 12)     # rótula
+    d.arc((sp((350, 70)), sp((450, 190))), 20, 340, fill=(176, 122, 98, 150), width=3 * SS)
+    d.line([sp((400, 215)), sp((397, 620))], fill=(190, 136, 110, 170), width=4 * SS)
+    soft(base, lambda x: x.ellipse((sp((318, 260)), sp((372, 440))), fill=(150, 100, 78, 90)), 18)    # gemelo
+    for i, x in enumerate((345, 372, 400, 428, 455)):
+        d.ellipse((sp((x - 13, 690)), sp((x + 13, 714))), fill=(248, 218, 205, 255), outline=(190, 136, 112, 255), width=2 * SS)
+    return base
 
 
-def zona_oreja(d):
-    for grow, col in ((8, BODY_L), (0, BODY)):
-        d.ellipse((sp((270 - grow, 110 - grow)), sp((540 + grow, 700 + grow))), fill=col + (255,))
-    d.ellipse((sp((320, 175)), sp((490, 600))), outline=LINE + (255,), width=5 * SS)
-    d.ellipse((sp((360, 380)), sp((450, 500))), fill=(40, 72, 98, 255), outline=SOFT + (255,), width=3 * SS)
-    d.polygon([sp((380, 232)), sp((456, 246)), sp((408, 300))], outline=SOFT + (255,), width=3 * SS)
-    thick(d, [(360, 330), (395, 255), (440, 200)], 6, SOFT + (255,))
+def base_oreja():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    dm.ellipse((sp((270, 110)), sp((540, 700))), fill=255)
+    base = shaded(m, r=28)
+    d = ImageDraw.Draw(base)
+    d.ellipse((sp((320, 175)), sp((490, 600))), outline=(168, 114, 92, 255), width=5 * SS)       # hélix interno
+    soft(base, lambda x: x.ellipse((sp((362, 398)), sp((448, 492))), fill=(150, 96, 78, 110)), 12)   # concha
+    d.polygon([sp((380, 232)), sp((456, 246)), sp((408, 300))], fill=(196, 140, 116, 255), outline=(150, 100, 82, 255))
+    d.line([sp((360, 330)), sp((395, 255)), sp((440, 200))], fill=(168, 114, 92, 255), width=6 * SS, joint="curve")
+    d.ellipse((sp((330, 440)), sp((372, 490))), fill=(214, 160, 136, 255), outline=(150, 100, 82, 255), width=2 * SS)   # trago
+    soft(base, lambda x: x.ellipse((sp((310, 580)), sp((500, 690))), fill=(255, 235, 218, 110)), 14)   # lóbulo
+    return base
 
 
-ZONAS = {"cara": zona_cara, "mano": zona_mano, "pierna": zona_pierna, "oreja": zona_oreja}
+BASES_ZONA = {"cara": base_cara, "mano": base_mano, "pierna": base_pierna, "oreja": base_oreja}
 
 
 def ilu_punto(t, lt, sc):
-    im, dyn = new_canvas(), new_canvas()
-    d, dd = ImageDraw.Draw(im), ImageDraw.Draw(dyn)
     zona = sc["zona"]
-    ZONAS[zona](d)
+    if zona not in _BASES:
+        _BASES[zona] = BASES_ZONA[zona]()
+    im = _BASES[zona].copy()
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(dyn)
     elegidos = [n for n in PUNTOS[zona] if (not sc.get("puntos")) or n.strip() in sc["puntos"]]
     for n in elegidos:
         x, y, _ = PUNTOS[zona][n]
@@ -309,6 +413,7 @@ def ilu_punto(t, lt, sc):
             dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), outline=YEL + (int(255 * (1 - ph) ** 1.3),), width=5 * SS)
         r = (15 + 3 * math.sin(lt * 5)) * SS
         dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=YEL + (255,))
+        dd.ellipse((x * SS - r * 0.45, y * SS - r * 0.45, x * SS + r * 0.45, y * SS + r * 0.45), fill=(255, 250, 220, 255))
     out = Image.alpha_composite(im, halo(dyn, r=18, k=1.0))
     od = ImageDraw.Draw(out)
     nombres = sorted({n.strip() for n in elegidos})
@@ -316,7 +421,9 @@ def ilu_punto(t, lt, sc):
     label(od, nombres[0] if len(nombres) == 1 else " · ".join(nombres), 400, 772, size=36)
     if len(nombres) == 1:
         f = font(26 * SS, False)
-        od.text((400 * SS, 724 * SS), pistas[nombres[0]], font=f, fill=(215, 230, 240, 255), anchor="mm")
+        tw = od.textlength(pistas[nombres[0]], font=f)
+        od.rounded_rectangle((400 * SS - tw / 2 - 16 * SS, 706 * SS, 400 * SS + tw / 2 + 16 * SS, 742 * SS), 18 * SS, fill=TEAL_D + (225,))
+        od.text((400 * SS, 724 * SS), pistas[nombres[0]], font=f, fill=(225, 238, 247, 255), anchor="mm")
     if sc.get("etiqueta"):
         label(od, sc["etiqueta"], 190, 40)
     return out
