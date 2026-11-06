@@ -1,0 +1,4 @@
+# Versión fija: sherpa-onnx 2.x quitó el procesamiento de pronunciación que usa la voz.
+sherpa-onnx==1.13.8
+numpy
+Pillow

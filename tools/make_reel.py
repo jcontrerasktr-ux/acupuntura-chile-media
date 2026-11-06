@@ -9,17 +9,23 @@ Spec:
   "hook_icon": "head",
   "points": [ {"title": "...", "body": "...", "icon": "needle"}, ... 3 o 4 ],
   "cta_line": "Evaluamos tu caso y armamos un plan a tu medida",
-  "web": "acupuntura-chile.cl"
+  "web": "acupuntura-chile.cl",
+  "voz": true,            # opcional: narración con voz sintética en español
+  "voz_id": 28            # 28 = mujer (ef_dora), 29 = hombre (em_alex)
 }
 Iconos: head, wave, moon, leaf, needle, check, calendar, body, heart
 """
 import json
 import math
+import os
+import re
 import subprocess
 import sys
+import tempfile
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0])
 from lib import *  # noqa
+import numpy as np
 
 
 def ease(u):
@@ -31,12 +37,22 @@ def scaled(im, k):
     return im.resize((int(im.width * k), int(im.height * k)), Image.LANCZOS)
 
 
-def build(spec):
+def narracion(spec):
+    """Texto que se lee en voz alta en cada escena: gancho, puntos y cierre."""
+    hook = spec["hook"].replace("*", "")
+    pts = [f'{p["title"]}. {p["body"]}' for p in spec["points"]]
+    cta = spec["cta_line"].rstrip(".") + ". Agenda tu hora en AcupunturaChile."
+    return [hook] + pts + [cta]
+
+
+def build(spec, vd=None):
+    """vd: duraciones (s) de la voz por escena, o None si el Reel va sin voz."""
     web = spec.get("web", "acupuntura-chile.cl")
     scenes, t = [], 0.0
+    fit = lambda base, i, pad: max(base, vd[i] + pad) if vd else base
 
     # --- gancho ---
-    dur = 3.8
+    dur = fit(3.8, 0, 0.9)
     els = [
         dict(layer=text_layer(spec["hook"], 100, maxw=900, stroke=2), cy=860, delay=0.1),
         dict(layer=scaled(icon(spec.get("hook_icon", "head")), 0.62), cy=1330, delay=0.5, float=True),
@@ -48,7 +64,7 @@ def build(spec):
     n = len(spec["points"])
     for i, p in enumerate(spec["points"]):
         words = len(p["body"].split())
-        dur = max(4.8, 2.4 + words * 0.30)
+        dur = fit(max(4.8, 2.4 + words * 0.30), i + 1, 0.9)
         els = [
             dict(layer=scaled(icon(p.get("icon", "leaf")), 0.80), cy=650, delay=0.0, float=True),
             dict(layer=text_layer(p["title"], 66, color=YEL, maxw=900, stroke=1), cy=1040, delay=0.25),
@@ -58,7 +74,7 @@ def build(spec):
         t += dur
 
     # --- cierre ---
-    dur = 4.6
+    dur = fit(4.6, n + 1, 1.2)
     els = [
         dict(layer=scaled(icon("calendar"), 0.55), cy=560, delay=0.0, float=True),
         dict(layer=text_layer(spec["cta_line"], 60, maxw=900), cy=850, delay=0.25),
@@ -104,16 +120,35 @@ def main():
     spec = json.load(open(sys.argv[1], encoding="utf-8"))
     out = sys.argv[2]
     cover = sys.argv[3] if len(sys.argv) > 3 else None
-    scenes, total = build(spec)
+    voz_wav = None
+    vd = None
+    if spec.get("voz"):
+        import voz as vozmod
+        sid = int(spec.get("voz_id", 28))
+        clips = [vozmod.sintetizar(t, sid=sid, velocidad=float(spec.get("voz_velocidad", 1.0))) for t in narracion(spec)]
+        vd = [len(x) / sr for x, sr in clips]
+    scenes, total = build(spec, vd)
+    if vd:
+        sr = clips[0][1]
+        pista = np.zeros(int((total + 0.5) * sr), dtype=np.float32)
+        for sc, (x, _), off in zip(scenes, clips, [0.25] + [0.4] * (len(scenes) - 2) + [0.5]):
+            i0 = int((sc["start"] + off) * sr)
+            pista[i0:i0 + len(x)] += x[: len(pista) - i0]
+        voz_wav = os.path.join(tempfile.mkdtemp(), "voz.wav")
+        vozmod.guardar_wav(pista, sr, voz_wav)
     tag_layer = pill_layer(spec.get("tag", "ACUPUNTURA · BIENESTAR"), 40, fill=TEAL)
     n = int(total * FPS)
     if cover:
         frame_at(scenes, tag_layer, 2.3, total).convert("RGB").save(cover, quality=93)
+    if voz_wav:
+        entrada_audio = ["-i", voz_wav, "-af", "highpass=f=70,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000", "-ac", "2"]
+    else:
+        entrada_audio = ["-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo"]
     ff = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-         "-f", "lavfi", "-i", "anullsrc=r=48000:cl=stereo", "-t", f"{total:.2f}",
+         *entrada_audio, "-t", f"{total:.2f}",
          "-c:v", "libx264", "-preset", "veryfast", "-crf", "20", "-pix_fmt", "yuv420p", "-profile:v", "high",
-         "-c:a", "aac", "-b:a", "96k", "-shortest", "-movflags", "+faststart", out],
+         "-c:a", "aac", "-b:a", "128k", "-shortest", "-movflags", "+faststart", out],
         stdin=subprocess.PIPE)
     for i in range(n):
         ff.stdin.write(frame_at(scenes, tag_layer, i / FPS, total).convert("RGB").tobytes())
