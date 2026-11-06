@@ -1,0 +1,12 @@
+{
+  "tag": "PUNTOS DE ACUPUNTURA · TENSIÓN EN LA CABEZA",
+  "hook": "¿Tensión en la *cabeza*? Mira estos puntos",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "escenas": [
+    {"voz": "¿Tensión en la cabeza? Estos puntos se usan en medicina china como apoyo.", "ilu": "punto", "zona": "cara", "etiqueta": "Medicina china"},
+    {"voz": "Yintang está entre las cejas. Puedes masajearlo con suavidad, en círculos.", "ilu": "punto", "zona": "cara", "puntos": ["Yintang"], "etiqueta": "Medicina china"},
+    {"voz": "Hegu está entre el pulgar y el índice. Presiona suave unos segundos, sin que duela.", "ilu": "punto", "zona": "mano", "etiqueta": "Medicina china"},
+    {"voz": "Son técnicas complementarias y no reemplazan una evaluación. Si el dolor es intenso o nuevo, consulta. Evaluamos tu caso y armamos un plan a tu medida. Agenda tu hora en AcupunturaChile.", "ilu": "cierre"}
+  ]
+}

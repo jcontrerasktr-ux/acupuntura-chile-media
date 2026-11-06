@@ -15,7 +15,7 @@ Spec:
     {"voz": "...", "ilu": "cierre"}
   ]
 }
-Ilustraciones: columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
+Ilustraciones: punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
 Todos los dibujos son originales y usan la paleta de la marca. Nunca copiar ilustraciones de otras cuentas.
 """
 import json
@@ -240,7 +240,89 @@ def ilu_meridianos(t, lt, sc):
     return out
 
 
-ILU = {"columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos}
+# ---------------------------------------------------------------- puntos de acupuntura (zoom a una zona)
+# nombre -> (x, y, pista en español). Coordenadas del lienzo 800x820.
+PUNTOS = {
+    "cara": {"Yintang": (400, 322, "entre las cejas"), "Taiyang": (232, 345, "en la sien"), "Taiyang ": (568, 345, "en la sien")},
+    "mano": {"Hegu": (306, 432, "entre el pulgar y el índice")},
+    "pierna": {"Zusanli": (436, 292, "cuatro dedos bajo la rodilla, por fuera")},
+    "oreja": {"Shenmen": (418, 252, "parte alta de la oreja")},
+}
+
+
+def zona_cara(d):
+    d.ellipse((sp((205, 130)), sp((595, 640))), fill=BODY + (255,), outline=BODY_L + (255,), width=5 * SS)
+    for ex in (205, 595):
+        d.ellipse((sp((ex - 28, 340)), sp((ex + 28, 440))), fill=BODY + (255,), outline=BODY_L + (255,), width=4 * SS)
+    for sx in (-1, 1):
+        cx = 400 + sx * 88
+        thick(d, [(cx - 52, 330), (cx - 10 * sx, 306), (cx + 52, 322)] if sx == -1 else [(cx - 52, 322), (cx + 10, 306), (cx + 52, 330)], 9, LINE + (255,))
+        d.ellipse((sp((cx - 32, 346)), sp((cx + 32, 376))), outline=LINE + (255,), width=4 * SS)
+        d.ellipse((sp((cx - 9, 354)), sp((cx + 9, 372))), fill=LINE + (255,))
+    thick(d, [(400, 380), (392, 455), (416, 462)], 5, SOFT + (255,))
+    d.arc((sp((340, 490)), sp((460, 560))), 20, 160, fill=SOFT + (255,), width=5 * SS)
+
+
+def zona_mano(d):
+    for grow, col in ((8, BODY_L), (0, BODY)):
+        d.rounded_rectangle((sp((300 - grow, 330 - grow)), sp((520 + grow, 600 + grow))), (70 + grow) * SS, fill=col + (255,))
+        d.rounded_rectangle((sp((332 - grow, 570 - grow)), sp((490 + grow, 705 + grow))), (40 + grow) * SS, fill=col + (255,))
+        for pts, w in (([(338, 380), (338, 175)], 46), ([(402, 360), (402, 125)], 48), ([(464, 380), (464, 165)], 46),
+                       ([(516, 410), (528, 250)], 38), ([(312, 540), (232, 470), (190, 378)], 50)):
+            thick(d, pts, w + 2 * grow, col + (255,))
+    for x in (338, 402, 464):
+        d.line([sp((x, 420)), sp((x + (6 if x > 400 else -2), 560))], fill=BODY_L + (140,), width=3 * SS)
+
+
+def zona_pierna(d):
+    for grow, col in ((8, BODY_L), (0, BODY)):
+        poly = [(332 - grow, 140), (468 + grow, 140), (486 + grow, 330), (448 + grow, 640), (352 - grow, 640), (314 - grow, 330)]
+        d.polygon([sp(p) for p in smooth(poly, 2)], fill=col + (255,))
+        d.ellipse((sp((320 - grow, 628 - grow)), sp((480 + grow, 715 + grow))), fill=col + (255,))
+    d.ellipse((sp((350, 70)), sp((470, 190))), outline=LINE + (255,), width=4 * SS)
+    d.line([sp((400, 215)), sp((396, 620))], fill=SOFT + (170,), width=4 * SS)
+
+
+def zona_oreja(d):
+    for grow, col in ((8, BODY_L), (0, BODY)):
+        d.ellipse((sp((270 - grow, 110 - grow)), sp((540 + grow, 700 + grow))), fill=col + (255,))
+    d.ellipse((sp((320, 175)), sp((490, 600))), outline=LINE + (255,), width=5 * SS)
+    d.ellipse((sp((360, 380)), sp((450, 500))), fill=(40, 72, 98, 255), outline=SOFT + (255,), width=3 * SS)
+    d.polygon([sp((380, 232)), sp((456, 246)), sp((408, 300))], outline=SOFT + (255,), width=3 * SS)
+    thick(d, [(360, 330), (395, 255), (440, 200)], 6, SOFT + (255,))
+
+
+ZONAS = {"cara": zona_cara, "mano": zona_mano, "pierna": zona_pierna, "oreja": zona_oreja}
+
+
+def ilu_punto(t, lt, sc):
+    im, dyn = new_canvas(), new_canvas()
+    d, dd = ImageDraw.Draw(im), ImageDraw.Draw(dyn)
+    zona = sc["zona"]
+    ZONAS[zona](d)
+    elegidos = [n for n in PUNTOS[zona] if (not sc.get("puntos")) or n.strip() in sc["puntos"]]
+    for n in elegidos:
+        x, y, _ = PUNTOS[zona][n]
+        for k in range(3):
+            ph = ((lt * 0.7) + k / 3) % 1.0
+            r = (16 + 80 * ph) * SS
+            dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), outline=YEL + (int(255 * (1 - ph) ** 1.3),), width=5 * SS)
+        r = (15 + 3 * math.sin(lt * 5)) * SS
+        dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=YEL + (255,))
+    out = Image.alpha_composite(im, halo(dyn, r=18, k=1.0))
+    od = ImageDraw.Draw(out)
+    nombres = sorted({n.strip() for n in elegidos})
+    pistas = {n.strip(): PUNTOS[zona][n][2] for n in elegidos}
+    label(od, nombres[0] if len(nombres) == 1 else " · ".join(nombres), 400, 772, size=36)
+    if len(nombres) == 1:
+        f = font(26 * SS, False)
+        od.text((400 * SS, 724 * SS), pistas[nombres[0]], font=f, fill=(215, 230, 240, 255), anchor="mm")
+    if sc.get("etiqueta"):
+        label(od, sc["etiqueta"], 190, 40)
+    return out
+
+
+ILU = {"punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos}
 
 
 # ---------------------------------------------------------------- subtítulos
@@ -340,8 +422,9 @@ def main():
             paste_center(f, save_l, 1370, ease((lt - 0.8) / 0.5) * a_out)
             paste_center(f, aviso, 1500, ease((lt - 1.0) / 0.5) * a_out)
         else:
-            ill = ILU[sc["ilu"]](tt, lt, sc).resize((int(CW * 1.15), int(CH * 1.15)), Image.LANCZOS)
-            paste_center(f, ill, 1150, al, dy=(1 - ease(lt / 0.5)) * 50)
+            k, cy = (1.0, 1105) if sc["ilu"] == "punto" else (1.15, 1150)
+            ill = ILU[sc["ilu"]](tt, lt, sc).resize((int(CW * k), int(CH * k)), Image.LANCZOS)
+            paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 50)
         d = ImageDraw.Draw(f)
         d.rounded_rectangle((90, 1620, 90 + int((W - 180) * tt / total), 1630), 5, fill=YEL + (230,))
         ff.stdin.write(f.convert("RGB").tobytes())
