@@ -1,0 +1,19 @@
+{
+  "pilares": ["Educación", "Mitos y verdades", "Hábitos y bienestar", "Servicios y empresas"],
+  "temas": [
+    {"id": "primera-sesion", "pilar": "Educación", "tema": "Qué esperar de tu primera sesión de acupuntura", "angulo": "Paso a paso tranquilizador: conversación, agujas finas y estériles, descanso"},
+    {"id": "mitos-dolor", "pilar": "Mitos y verdades", "tema": "Mitos sobre la acupuntura (duele, es peligrosa, es solo placebo)", "angulo": "Mito vs verdad, tono simple y sin exagerar"},
+    {"id": "migrana-habitos", "pilar": "Hábitos y bienestar", "tema": "Cefaleas y migrañas: hábitos que ayudan a manejarlas", "angulo": "Sueño, hidratación, pausas, estrés; la acupuntura como apoyo, sin promesas"},
+    {"id": "dolor-espalda-oficina", "pilar": "Hábitos y bienestar", "tema": "Dolor de espalda y cuello por trabajar sentado", "angulo": "Pausas activas, postura y terapias complementarias"},
+    {"id": "estres-sueno", "pilar": "Hábitos y bienestar", "tema": "Estrés y sueño: respiración y acupuntura como apoyo", "angulo": "Rutina nocturna breve"},
+    {"id": "auriculoterapia", "pilar": "Educación", "tema": "Qué es la auriculoterapia", "angulo": "Explicación simple del oído como mapa del cuerpo; usos de apoyo"},
+    {"id": "peso-ansiedad", "pilar": "Educación", "tema": "Control del peso y ansiedad por comer: enfoque integral", "angulo": "Hábitos + apoyo profesional, sin dietas milagro"},
+    {"id": "cuantas-sesiones", "pilar": "Educación", "tema": "¿Cuántas sesiones necesito?", "angulo": "Depende de cada caso; se evalúa y se ajusta el plan"},
+    {"id": "preparar-sesion", "pilar": "Hábitos y bienestar", "tema": "Cómo prepararte para tu sesión", "angulo": "Comer liviano, ropa cómoda, llegar con tiempo"},
+    {"id": "empresas", "pilar": "Servicios y empresas", "tema": "Bienestar para empresas: jornadas y pausas activas", "angulo": "Convenios y actividades corporativas para equipos"},
+    {"id": "medicina-china-simple", "pilar": "Educación", "tema": "Medicina China explicada simple (Qi, equilibrio)", "angulo": "Conceptos básicos sin jerga"},
+    {"id": "enfoque-integral", "pilar": "Servicios y empresas", "tema": "Un solo lugar: acupuntura, kinesiología, osteopatía, masaje", "angulo": "Cómo se complementan las terapias del centro"},
+    {"id": "seguridad-agujas", "pilar": "Mitos y verdades", "tema": "¿Es segura la acupuntura?", "angulo": "Agujas estériles de un solo uso y profesionales formados"},
+    {"id": "sedes", "pilar": "Servicios y empresas", "tema": "Dónde atendemos", "angulo": "Santiago, Viña del Mar, La Serena, Talca y Curicó"}
+  ]
+}

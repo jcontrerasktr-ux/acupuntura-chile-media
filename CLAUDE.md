@@ -1,0 +1,42 @@
+# Contenido semanal de Instagram: AcupunturaChile
+
+Cuenta: @acupunturachilee. Conector Windsor `instagram`, cuenta `17841406761224388`.
+Sitio: acupuntura-chile.cl. Sedes: Santiago, Viña del Mar, La Serena, Talca, Curicó. Servicios: acupuntura, medicina china, kinesiología, masaje terapéutico, osteopatía, quiropraxia, auriculoterapia, programas de bienestar para empresas.
+Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espalda, cuello), estrés, sueño, ansiedad y control de peso; también equipos de empresas.
+
+## Cadencia
+- 1 Reel por semana (miércoles, tarde).
+- 2 historias por semana: martes (mito o verdad) y sábado (tip o pregunta).
+
+## Reglas de contenido (obligatorias)
+1. Contenido original. Las tendencias que se investigan en la web sirven solo de inspiración para formatos y ganchos. Nunca copiar videos, textos ni imágenes de otras cuentas.
+2. Educativo y prudente. No prometer curas ni resultados. No usar porcentajes ni cifras de efectividad. No usar "antes y después". No diagnosticar. Usar fórmulas como "puede ayudar", "como apoyo", "complementario". Si el tema es un síntoma, recordar que ante síntomas intensos o nuevos hay que consultar a un profesional de salud.
+3. Nada de pacientes: sin nombres, rostros ni testimonios, salvo que Julio los entregue en el chat y confirme la autorización de la paciente.
+4. Español de Chile, trato de tú, tono cercano y simple. Frases cortas.
+5. Marca: verde azulado, amarillo de acento, tipografía Poppins. Siempre mostrar AcupunturaChile y acupuntura-chile.cl.
+6. No repetir temas: revisar `plan/historial.json` y elegir el siguiente de `plan/temas.json` que no se haya usado (rotar pilares).
+
+## Flujo de una publicación
+1. Elegir tema (regla 6). Para el Reel, hacer una búsqueda web rápida para inspirar el gancho.
+2. Escribir el spec JSON (ver docstring de `tools/make_reel.py` y `tools/make_story.py`). Límites: gancho de 12 palabras o menos; título de punto de 6 palabras o menos; cuerpo de 22 palabras o menos; 3 puntos por Reel.
+3. Generar en `media/AAAA-MM-DD-slug/`:
+   - Reel: `python3 tools/make_reel.py spec.json media/.../reel.mp4 media/.../portada.jpg`
+   - Historia: `python3 tools/make_story.py spec.json media/.../historia.jpg`
+4. Revisar visualmente (extraer cuadros con ffmpeg y mirarlos): texto sin cortes, sin errores de ortografía, dentro de la zona segura.
+5. `git add`, commit y `git push origin HEAD:main`.
+6. Esperar a que la URL pública responda 200 (reintentar hasta 5 minutos):
+   `https://jcontrerasktr-ux.github.io/acupuntura-chile-media/media/AAAA-MM-DD-slug/reel.mp4`
+   Si GitHub Pages no responde, probar `https://raw.githubusercontent.com/jcontrerasktr-ux/acupuntura-chile-media/main/media/.../reel.mp4`. Para el Reel, comprobar con `curl -I` que el tipo sea `video/mp4`.
+7. Publicar con Windsor (cargar las herramientas con ToolSearch: `select:mcp__Windsor_ai__execute_action,mcp__Windsor_ai__list_actions`):
+   - Reel: acción `create_video_post` con `video_url`, `caption`, `cover_url` (portada.jpg) y `share_to_feed: true`.
+   - Historia: acción `create_story` con `image_url`.
+8. Registrar en `plan/historial.json` (fecha, tipo, id_tema, resultado), commit y push.
+9. Enviar a Julio un resumen corto con `SendUserMessage`: qué se publicó, el texto y el resultado. Si algo falla, explicarlo y no reintentar más de una vez.
+
+## Formato del texto del Reel (caption)
+- Primera línea: gancho con una pregunta. Segundo párrafo: idea central en 1 o 2 frases prudentes. Tercer párrafo: "Cada persona responde distinto; en AcupunturaChile evaluamos tu caso y armamos un plan a tu medida."
+- Luego: sedes y "Agenda tu hora: acupuntura-chile.cl (link en bio)".
+- 8 a 10 hashtags: #acupuntura #AcupunturaChile #bienestar #saludintegral #medicinatradicionalchina más 3 a 5 del tema.
+
+## Videos propios de Julio
+Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
