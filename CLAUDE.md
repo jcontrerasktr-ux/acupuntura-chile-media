@@ -38,6 +38,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 - Contenido desde las tres miradas de la clínica: medicina china, kinesiología y quiropraxia. No hace falta que cada Reel hable de todas: la mayoría se centra en UNA terapia (rotar entre ellas) y de vez en cuando uno junta las tres, como el ejemplo. Explicar con datos de anatomía o conceptos de la tradición ("según la medicina china…"), sin cifras de efectividad ni promesas.
 - Reels de PUNTOS DE ACUPUNTURA para una molestia (tensión de cabeza, estrés, sueño, digestión): ilustración `punto` con `zona` cara|mano|pierna|oreja (ejemplo: `plan/ejemplos/ilustrado-puntos-cabeza.json`). Mostrar nombre y ubicación del punto, decir que se usa "en medicina china como apoyo", masaje suave y sin dolor, sin cifras ni promesas, y cerrar recordando que no reemplaza una evaluación y que ante dolor intenso o nuevo hay que consultar. Puntos disponibles: Yintang y Taiyang (cara), Hegu (mano), Zusanli (pierna), Shenmen (oreja).
 - Alternar: semana con Reel de puntos (`make_reel.py`) y semana con Reel ilustrado. Julio debe aprobar el primero antes de publicarlo.
+- Estilo de dibujo aprobado por Julio (volumen, sombras, tonos de piel, detalles): no cambiarlo. Cualquier ilustración nueva debe seguir el mismo estilo.
 - Inspiración: formatos de otras cuentas (ilustración animada, subtítulos que resaltan la palabra). Jamás copiar sus dibujos, textos ni videos.
 
 ## Voz del Reel
