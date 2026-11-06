@@ -1,12 +1,26 @@
 {
- "tag": "ACUPUNTURA · PRIMERA SESIÓN",
- "hook": "¿Primera vez en *acupuntura*? Esto es lo que pasa",
- "hook_icon": "needle",
- "points": [
-  {"title": "Primero conversamos", "body": "Revisamos tu historia, tus molestias y tus objetivos antes de tocar una sola aguja.", "icon": "calendar"},
-  {"title": "Agujas finas y estériles", "body": "Son de un solo uso y mucho más delgadas que las de una inyección. La mayoría siente solo una leve sensación.", "icon": "needle"},
-  {"title": "Un rato de calma", "body": "Descansas unos 20 a 30 minutos mientras el cuerpo se relaja. Muchas personas salen más tranquilas.", "icon": "leaf"}
- ],
- "cta_line": "Evaluamos tu caso y armamos un plan a tu medida",
- "web": "acupuntura-chile.cl"
+  "tag": "ACUPUNTURA · PRIMERA SESIÓN",
+  "hook": "¿Primera vez en *acupuntura*? Esto es lo que pasa",
+  "hook_icon": "needle",
+  "points": [
+    {
+      "title": "Primero conversamos",
+      "body": "Revisamos tu historia, tus molestias y tus objetivos antes de tocar una sola aguja.",
+      "icon": "calendar"
+    },
+    {
+      "title": "Agujas finas y estériles",
+      "body": "Son de un solo uso y mucho más delgadas que las de una inyección. La mayoría siente solo una leve sensación.",
+      "icon": "needle"
+    },
+    {
+      "title": "Un rato de calma",
+      "body": "Descansas unos 20 a 30 minutos mientras el cuerpo se relaja. Muchas personas salen más tranquilas.",
+      "icon": "leaf"
+    }
+  ],
+  "cta_line": "Evaluamos tu caso y armamos un plan a tu medida",
+  "web": "acupuntura-chile.cl",
+  "voz": true,
+  "voz_id": 28
 }

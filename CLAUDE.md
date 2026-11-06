@@ -20,6 +20,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 1. Elegir tema (regla 6) y formato desde `plan/ideas.md`. Para el Reel, hacer una búsqueda web rápida para inspirar el gancho. Revisar las fechas especiales de ese archivo.
 2. Escribir el spec JSON (ver docstring de `tools/make_reel.py` y `tools/make_story.py`). Límites: gancho de 12 palabras o menos; título de punto de 6 palabras o menos; cuerpo de 22 palabras o menos; 3 puntos por Reel.
 3. Generar en `media/AAAA-MM-DD-slug/`:
+   - Antes del primer Reel de la sesión: `pip install --break-system-packages -r tools/requirements.txt` (la voz descarga sola ~350 MB desde GitHub).
    - Reel: `python3 tools/make_reel.py spec.json media/.../reel.mp4 media/.../portada.jpg`
    - Historia: `python3 tools/make_story.py spec.json media/.../historia.jpg`
 4. Revisar visualmente (extraer cuadros con ffmpeg y mirarlos): texto sin cortes, sin errores de ortografía, dentro de la zona segura.
@@ -32,6 +33,10 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 8. Registrar en `plan/historial.json` (fecha, tipo, id_tema, resultado), commit y push.
 9. Enviar a Julio un resumen corto con `SendUserMessage`: qué se publicó, el texto y el resultado. Si algo falla, explicarlo y no reintentar más de una vez.
 
+## Voz del Reel
+- Julio eligió voz sintética en español neutro (no chileno). Todos los Reels llevan `"voz": true` y `"voz_id": 28` (mujer) en el spec; la narración lee gancho, puntos y cierre (`narracion()` en `tools/make_reel.py`).
+- Si Julio envía su propia grabación, usarla en vez de la sintética.
+
 ## Formato del texto del Reel (caption)
 - Primera línea: gancho con una pregunta. Segundo párrafo: idea central en 1 o 2 frases prudentes. Tercer párrafo: "Cada persona responde distinto; en AcupunturaChile evaluamos tu caso y armamos un plan a tu medida."
 - Luego: sedes y "Agenda tu hora: acupuntura-chile.cl (link en bio)".
@@ -41,4 +46,4 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
 
 ## Contenido ya preparado y mostrado a Julio
-- **Reel del miércoles 11 de noviembre de 2026:** ya está generado en `media/2026-11-11-primera-sesion/` (`reel.mp4`, `portada.jpg`, `caption.txt`, tema `primera-sesion`). En esa ejecución NO generar otro: comprobar la URL, publicar exactamente ese Reel con ese texto (pasos 6 a 9) y registrarlo en el historial. Si Julio pidió cambios antes, estarán reflejados en esa carpeta.
+- **Reel del miércoles 11 de noviembre de 2026:** ya está generado en `media/2026-11-11-primera-sesion/` (`reel.mp4` con voz neutra ya incluida, `portada.jpg`, `caption.txt`, tema `primera-sesion`). En esa ejecución NO generar otro: comprobar la URL, publicar exactamente ese Reel con ese texto (pasos 6 a 9) y registrarlo en el historial. Si Julio pidió cambios antes, estarán reflejados en esa carpeta.
