@@ -1,5 +1,16 @@
 {
   "publicaciones": [
-    {"fecha": "2026-11-06", "tipo": "reel", "tema": "Testimonio migrañas (video propio, publicado manualmente por Julio)", "id_tema": null}
+    {
+      "fecha": "2026-11-06",
+      "tipo": "reel",
+      "tema": "Testimonio migrañas (video propio, publicado manualmente por Julio)",
+      "id_tema": null
+    },
+    {
+      "fecha": "2026-11-06",
+      "tipo": "reel",
+      "id_tema": "puntos-cabeza",
+      "resultado": "publicado (prueba pedida por Julio) media_id 18644349757033424"
+    }
   ]
 }
