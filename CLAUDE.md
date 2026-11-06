@@ -17,7 +17,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 6. No repetir temas: revisar `plan/historial.json` y elegir el siguiente de `plan/temas.json` que no se haya usado (rotar pilares).
 
 ## Flujo de una publicación
-1. Elegir tema (regla 6). Para el Reel, hacer una búsqueda web rápida para inspirar el gancho.
+1. Elegir tema (regla 6) y formato desde `plan/ideas.md`. Para el Reel, hacer una búsqueda web rápida para inspirar el gancho. Revisar las fechas especiales de ese archivo.
 2. Escribir el spec JSON (ver docstring de `tools/make_reel.py` y `tools/make_story.py`). Límites: gancho de 12 palabras o menos; título de punto de 6 palabras o menos; cuerpo de 22 palabras o menos; 3 puntos por Reel.
 3. Generar en `media/AAAA-MM-DD-slug/`:
    - Reel: `python3 tools/make_reel.py spec.json media/.../reel.mp4 media/.../portada.jpg`
@@ -35,7 +35,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 ## Formato del texto del Reel (caption)
 - Primera línea: gancho con una pregunta. Segundo párrafo: idea central en 1 o 2 frases prudentes. Tercer párrafo: "Cada persona responde distinto; en AcupunturaChile evaluamos tu caso y armamos un plan a tu medida."
 - Luego: sedes y "Agenda tu hora: acupuntura-chile.cl (link en bio)".
-- 8 a 10 hashtags: #acupuntura #AcupunturaChile #bienestar #saludintegral #medicinatradicionalchina más 3 a 5 del tema.
+- Hashtags: máximo 5 (límite de Instagram): #acupuntura #AcupunturaChile más 3 relevantes del tema. Cerrar con una invitación a guardar o compartir y, si calza, una pregunta para comentar.
 
 ## Videos propios de Julio
 Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
