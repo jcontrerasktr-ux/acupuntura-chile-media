@@ -37,6 +37,9 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 - Julio eligió voz sintética en español neutro (no chileno). Todos los Reels llevan `"voz": true` y `"voz_id": 28` (mujer) en el spec; la narración lee gancho, puntos y cierre (`narracion()` en `tools/make_reel.py`).
 - Si Julio envía su propia grabación, usarla en vez de la sintética.
 
+## Portada del Reel
+- `make_reel.py` genera la portada sola: azul liso del logo (#395D77), logo arriba, etiqueta, gancho en blanco con acento amarillo y acupuntura-chile.cl. Todo queda en la franja central que recorta la grilla del perfil. No cambiar a otro estilo.
+
 ## Formato del texto del Reel (caption)
 - Primera línea: gancho con una pregunta. Segundo párrafo: idea central en 1 o 2 frases prudentes. Tercer párrafo: "Cada persona responde distinto; en AcupunturaChile evaluamos tu caso y armamos un plan a tu medida."
 - Luego: sedes y "Agenda tu hora: acupuntura-chile.cl (link en bio)".

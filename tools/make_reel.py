@@ -116,6 +116,26 @@ def frame_at(scenes, tag_layer, t, total):
     return f
 
 
+def portada(spec, path):
+    """Portada 1080x1920 en azul liso del logo (#395D77), logo arriba y gancho grande.
+    Todo queda en la franja central (y 240-1680) que recorta la grilla del perfil."""
+    img = Image.new("RGBA", (W, H), TEAL + (255,))
+    glow = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    ImageDraw.Draw(glow).ellipse((-200, 560, W + 200, 1500), fill=(255, 255, 255, 22))
+    img.alpha_composite(glow.filter(ImageFilter.GaussianBlur(160)))
+    items = [logo(440), pill_layer(spec.get("tag", "ACUPUNTURA · BIENESTAR"), 36, fill=TEAL_M),
+             text_layer(spec["hook"], 92, maxw=900, stroke=0),
+             text_layer(spec.get("web", "acupuntura-chile.cl"), 42, color=YEL, bold=False, maxw=800)]
+    gap = 46
+    total = sum(i.height for i in items) + gap * (len(items) - 1)
+    y = 240 + max(0, (1440 - total) // 2)
+    for it in items:
+        img.alpha_composite(it, (int(W / 2 - it.width / 2), int(y)))
+        y += it.height + gap
+    img.convert("RGB").save(path, quality=93)
+    print("portada", path, "contenido hasta y =", int(y - gap))
+
+
 def main():
     spec = json.load(open(sys.argv[1], encoding="utf-8"))
     out = sys.argv[2]
@@ -139,7 +159,7 @@ def main():
     tag_layer = pill_layer(spec.get("tag", "ACUPUNTURA · BIENESTAR"), 40, fill=TEAL)
     n = int(total * FPS)
     if cover:
-        frame_at(scenes, tag_layer, 2.3, total).convert("RGB").save(cover, quality=93)
+        portada(spec, cover)
     if voz_wav:
         entrada_audio = ["-i", voz_wav, "-af", "highpass=f=70,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000", "-ac", "2"]
     else:
