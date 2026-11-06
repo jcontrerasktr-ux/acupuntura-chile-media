@@ -24,10 +24,10 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
    - Historia: `python3 tools/make_story.py spec.json media/.../historia.jpg`
 4. Revisar visualmente (extraer cuadros con ffmpeg y mirarlos): texto sin cortes, sin errores de ortografía, dentro de la zona segura.
 5. `git add`, commit y `git push origin HEAD:main`.
-6. Esperar a que la URL pública responda 200 (reintentar hasta 5 minutos):
-   `https://jcontrerasktr-ux.github.io/acupuntura-chile-media/media/AAAA-MM-DD-slug/reel.mp4`
-   Si GitHub Pages no responde, probar `https://raw.githubusercontent.com/jcontrerasktr-ux/acupuntura-chile-media/main/media/.../reel.mp4`. Para el Reel, comprobar con `curl -I` que el tipo sea `video/mp4`.
-7. Publicar con Windsor (cargar las herramientas con ToolSearch: `select:mcp__Windsor_ai__execute_action,mcp__Windsor_ai__list_actions`):
+6. Comprobar que el archivo existe en GitHub (desde esta sesión solo se alcanza raw, no github.io):
+   `curl -sI https://raw.githubusercontent.com/jcontrerasktr-ux/acupuntura-chile-media/main/media/AAAA-MM-DD-slug/reel.mp4` debe dar 200 (reintentar hasta 3 minutos).
+7. Publicar con Windsor (cargar las herramientas con ToolSearch: `select:mcp__Windsor_ai__execute_action,mcp__Windsor_ai__list_actions`). Probar primero la URL de GitHub Pages
+   `https://jcontrerasktr-ux.github.io/acupuntura-chile-media/media/AAAA-MM-DD-slug/reel.mp4` (entrega el tipo `video/mp4` que Instagram exige; no se puede verificar desde esta sesión). Si Windsor devuelve un error de URL o formato y NO publicó, reintentar una sola vez con la URL raw de `raw.githubusercontent.com`. Para imágenes (historias) sirve cualquiera de las dos.
    - Reel: acción `create_video_post` con `video_url`, `caption`, `cover_url` (portada.jpg) y `share_to_feed: true`.
    - Historia: acción `create_story` con `image_url`.
 8. Registrar en `plan/historial.json` (fecha, tipo, id_tema, resultado), commit y push.
