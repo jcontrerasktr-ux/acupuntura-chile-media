@@ -6,12 +6,12 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 W, H, FPS = 1080, 1920, 30
 FONT_DIRS = ["/usr/share/fonts/truetype/google-fonts", "/usr/share/fonts/truetype/dejavu"]
 
-TEAL = (0, 128, 118)
-TEAL_D = (8, 38, 46)
-TEAL_M = (14, 72, 74)
+TEAL = (57, 93, 119)      # azul de marca (logo)
+TEAL_D = (18, 36, 52)
+TEAL_M = (40, 72, 98)
 YEL = (255, 205, 40)
 WHITE = (255, 255, 255)
-MINT = (150, 225, 210)
+MINT = (170, 210, 235)
 CORAL = (240, 96, 90)
 INK = (25, 25, 25)
 
@@ -45,7 +45,7 @@ def bg_frame(t=0.0):
         yy = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
         _BG = np.array(TEAL_D, np.float32) * (1 - yy) + np.array(TEAL_M, np.float32) * yy
         _BG = np.repeat(_BG, W, axis=1)
-        _BLOBS = [_blob(900, (30, 170, 150), 0.55), _blob(760, (60, 200, 170), 0.35), _blob(820, (20, 120, 130), 0.5)]
+        _BLOBS = [_blob(900, (70, 125, 170), 0.55), _blob(760, (95, 150, 195), 0.32), _blob(820, (50, 100, 150), 0.5)]
     a = _BG.copy()
     cfg = [(0.15, 0.20, 0.35, 0.0), (0.85, 0.55, 0.30, 2.1), (0.30, 0.90, 0.28, 4.2)]
     for blob, (cx, cy, sp, ph) in zip(_BLOBS, cfg):
@@ -127,7 +127,7 @@ def text_layer(text, size, color=WHITE, hl_color=YEL, bold=True, maxw=900, line_
     return im
 
 
-def pill_layer(text, size=46, fill=TEAL, fg=WHITE, pad=(44, 20), bold=True):
+def pill_layer(text, size=46, fill=(74, 124, 160), fg=WHITE, pad=(44, 20), bold=True):
     fnt = font(size, bold)
     d0 = ImageDraw.Draw(Image.new("RGB", (4, 4)))
     tw = d0.textlength(text, font=fnt)
@@ -243,8 +243,19 @@ def icon(name, color=MINT, accent=YEL):
     return _glow(im, 12, 0.8)
 
 
-def footer_brand(img, y=1500, web="acupuntura-chile.cl"):
-    layer = pill_layer("AcupunturaChile", 46, fill=WHITE, fg=(0, 110, 102), pad=(40, 16))
-    img.alpha_composite(layer, (int(W / 2 - layer.width / 2), y))
-    t = text_layer(web, 34, color=(220, 240, 236), bold=False, maxw=700)
-    img.alpha_composite(t, (int(W / 2 - t.width / 2), y + layer.height - 6))
+_LOGO = None
+
+
+def logo(width):
+    """Logo blanco de AcupunturaChile (assets/logo_blanco.png) con ancho dado."""
+    global _LOGO
+    if _LOGO is None:
+        path = __file__.rsplit("/", 2)[0] + "/assets/logo_blanco.png"
+        _LOGO = Image.open(path).convert("RGBA")
+    h = int(_LOGO.height * width / _LOGO.width)
+    return _LOGO.resize((width, h), Image.LANCZOS)
+
+
+def footer_brand(img, y=1520, web="acupuntura-chile.cl"):
+    t = text_layer(web, 40, color=(230, 240, 248), bold=False, maxw=700)
+    img.alpha_composite(t, (int(W / 2 - t.width / 2), y))

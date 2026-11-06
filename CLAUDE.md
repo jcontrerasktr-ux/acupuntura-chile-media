@@ -13,7 +13,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 2. Educativo y prudente. No prometer curas ni resultados. No usar porcentajes ni cifras de efectividad. No usar "antes y después". No diagnosticar. Usar fórmulas como "puede ayudar", "como apoyo", "complementario". Si el tema es un síntoma, recordar que ante síntomas intensos o nuevos hay que consultar a un profesional de salud.
 3. Nada de pacientes: sin nombres, rostros ni testimonios, salvo que Julio los entregue en el chat y confirme la autorización de la paciente.
 4. Español de Chile, trato de tú, tono cercano y simple. Frases cortas.
-5. Marca: verde azulado, amarillo de acento, tipografía Poppins. Siempre mostrar AcupunturaChile y acupuntura-chile.cl.
+5. Marca: azul del logo (#395D77) y blanco, amarillo de acento, tipografía Poppins. Todas las historias llevan el logo de AcupunturaChile arriba (`assets/logo_blanco.png`, lo pone `tools/make_story.py` solo) y el Reel lo muestra en el cierre. Siempre mostrar acupuntura-chile.cl. No inventar ni redibujar el logo: usar solo el archivo de `assets/`.
 6. No repetir temas: revisar `plan/historial.json` y elegir el siguiente de `plan/temas.json` que no se haya usado (rotar pilares).
 
 ## Flujo de una publicación

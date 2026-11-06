@@ -60,11 +60,11 @@ def build(spec):
     # --- cierre ---
     dur = 4.6
     els = [
-        dict(layer=scaled(icon("calendar"), 0.80), cy=650, delay=0.0, float=True),
-        dict(layer=text_layer(spec["cta_line"], 62, maxw=900), cy=1020, delay=0.25),
-        dict(layer=pill_layer("AcupunturaChile", 62, fill=WHITE, fg=(0, 110, 102), pad=(54, 24)), cy=1245, delay=0.6),
-        dict(layer=text_layer(web, 44, color=(220, 240, 236), bold=False, maxw=800), cy=1360, delay=0.8),
-        dict(layer=text_layer("Guarda y comparte este Reel", 38, color=YEL, maxw=800), cy=1465, delay=1.1),
+        dict(layer=scaled(icon("calendar"), 0.55), cy=560, delay=0.0, float=True),
+        dict(layer=text_layer(spec["cta_line"], 60, maxw=900), cy=850, delay=0.25),
+        dict(layer=logo(400), cy=1160, delay=0.6),
+        dict(layer=text_layer(web, 44, color=(230, 240, 248), bold=False, maxw=800), cy=1400, delay=0.9),
+        dict(layer=text_layer("Guarda y comparte este Reel", 38, color=YEL, maxw=800), cy=1480, delay=1.2),
     ]
     scenes.append(dict(start=t, end=t + dur, els=els, dots=None))
     t += dur

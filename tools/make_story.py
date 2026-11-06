@@ -42,28 +42,28 @@ def layout(spec):
     img = bg_frame(3.0)
     tag = pill_layer(spec.get("tag", "ACUPUNTURA · BIENESTAR"), 40, fill=TEAL)
     kind = spec.get("type", "tip")
-    items = [tag]
+    items = [logo(250), tag]
     if kind == "mito":
         items += [pill_layer("MITO", 50, fill=CORAL, pad=(50, 16)), fit_text(spec["mito"], 62, maxw=900),
-                  pill_layer("VERDAD", 50, fill=(0, 150, 132), pad=(50, 16)), fit_text(spec["verdad"], 50, bold=False, maxw=900, line_h=1.3)]
+                  pill_layer("VERDAD", 50, fill=(60, 140, 110), pad=(50, 16)), fit_text(spec["verdad"], 50, bold=False, maxw=900, line_h=1.3)]
     elif kind == "pregunta":
-        items += [scaled(icon("body"), 0.7), fit_text(spec["question"], 74, maxw=900, stroke=1),
+        items += [scaled(icon("body"), 0.55), fit_text(spec["question"], 74, maxw=900, stroke=1),
                   text_layer(spec.get("hint", "Responde por mensaje directo"), 40, color=YEL, maxw=800)]
     else:
-        items += [scaled(icon(spec.get("icon", "leaf")), 0.8), fit_text(spec["title"], 68, color=YEL, maxw=900, stroke=1),
+        items += [scaled(icon(spec.get("icon", "leaf")), 0.6), fit_text(spec["title"], 68, color=YEL, maxw=900, stroke=1),
                   fit_text(spec["body"], 46, bold=False, maxw=880, line_h=1.3)]
-    gap = 30
+    gap = 24
     total_h = sum(i.height for i in items) + gap * (len(items) - 1)
     y0 = 280 + max(0, (1200 - total_h) // 2) if total_h < 1200 else 280
     stack(img, items, y0, gap)
-    footer_brand(img, 1500, spec.get("web", "acupuntura-chile.cl"))
+    footer_brand(img, 1530, spec.get("web", "acupuntura-chile.cl"))
     return img, y0 + total_h
 
 
 def main():
     spec = json.load(open(sys.argv[1], encoding="utf-8"))
     img, bottom = layout(spec)
-    if bottom > 1500:
+    if bottom > 1510:
         print(f"AVISO: el contenido llega a y={bottom}; acorta el texto.")
     img.convert("RGB").save(sys.argv[2], quality=93)
     print("ok", sys.argv[2], "fin contenido y =", bottom)
