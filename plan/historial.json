@@ -18,6 +18,13 @@
       "subtipo": "tip",
       "id_tema": "estres-sueno",
       "resultado": "publicado media_id 18015011102763380"
+    },
+    {
+      "fecha": "2026-11-08",
+      "tipo": "historia",
+      "subtipo": "dato-historico",
+      "id_tema": "historia-neijing",
+      "resultado": "publicado media_id 17988649439886371 (video 49 s, URL GitHub Pages)"
     }
   ]
 }
