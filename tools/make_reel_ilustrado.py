@@ -379,18 +379,63 @@ def base_pierna():
     return base
 
 
+def soft_c(base, drawfn, blur=10):
+    """Como soft(), pero mezcla el color sin oscurecer los bordes (desenfoque con alfa premultiplicado)."""
+    lay = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    drawfn(ImageDraw.Draw(lay))
+    lay = lay.convert("RGBa").filter(ImageFilter.GaussianBlur(blur * SS)).convert("RGBA")
+    a = np.minimum(np.asarray(lay.getchannel("A")), np.asarray(base.getchannel("A")))
+    lay.putalpha(Image.fromarray(a))
+    base.alpha_composite(lay)
+
+
 def base_oreja():
+    """Oreja con hélix, antihélix en Y (fosa triangular donde va Shenmen), concha, trago, antitrago y lóbulo."""
+    contorno = [(410, 104), (470, 118), (522, 164), (552, 250), (552, 360), (528, 470), (492, 570), (456, 650),
+                (412, 700), (368, 692), (342, 652), (344, 580), (334, 520), (322, 450), (330, 370), (336, 285),
+                (344, 215), (358, 160), (380, 122)]
     m = mask_new()
     dm = ImageDraw.Draw(m)
-    dm.ellipse((sp((270, 110)), sp((540, 700))), fill=255)
-    base = shaded(m, r=28)
-    d = ImageDraw.Draw(base)
-    d.ellipse((sp((320, 175)), sp((490, 600))), outline=(168, 114, 92, 255), width=5 * SS)       # hélix interno
-    soft(base, lambda x: x.ellipse((sp((362, 398)), sp((448, 492))), fill=(150, 96, 78, 110)), 12)   # concha
-    d.polygon([sp((380, 232)), sp((456, 246)), sp((408, 300))], fill=(196, 140, 116, 255), outline=(150, 100, 82, 255))
-    d.line([sp((360, 330)), sp((395, 255)), sp((440, 200))], fill=(168, 114, 92, 255), width=6 * SS, joint="curve")
-    d.ellipse((sp((330, 440)), sp((372, 490))), fill=(214, 160, 136, 255), outline=(150, 100, 82, 255), width=2 * SS)   # trago
-    soft(base, lambda x: x.ellipse((sp((310, 580)), sp((500, 690))), fill=(255, 235, 218, 110)), 14)   # lóbulo
+    dm.polygon([sp(q) for q in smooth(contorno, 4)], fill=255)
+    dm.ellipse((sp((316, 418)), sp((384, 508))), fill=255)                      # trago
+    base = shaded(m, r=30)
+    ROSA, OSC, CLA, LUZ = (150, 96, 78), (120, 74, 60), (252, 226, 206), (255, 242, 228)
+
+    def trazo(tr, w, col, dx=0, dy=0):
+        return lambda x: thick(x, [(q[0] + dx, q[1] + dy) for q in tr], w, col)
+
+    # hélix: reborde con volumen (sombra abajo-derecha, luz arriba-izquierda) y surco interior
+    helix = smooth([(366, 212), (394, 160), (452, 150), (500, 192), (522, 270), (518, 372), (494, 470), (466, 556)], 2)
+    soft_c(base, trazo(helix, 30, ROSA + (150,), 7, 10), 8)
+    soft_c(base, trazo(helix, 24, (248, 216, 192, 255)), 3)
+    soft_c(base, trazo(helix, 8, LUZ + (200,), -5, -6), 4)
+    surco = smooth([(374, 230), (402, 186), (450, 178), (486, 214), (500, 280), (494, 372), (472, 458)], 2)
+    soft_c(base, trazo(surco, 6, OSC + (170,)), 2)
+    # escafa: canal hundido entre hélix y antihélix
+    soft_c(base, trazo(smooth([(420, 215), (455, 232), (468, 300), (458, 400), (440, 470)], 2), 34, ROSA + (110,)), 12)
+    # antihélix en Y
+    tallo = [(404, 520), (414, 450), (426, 385), (430, 338)]
+    sup = smooth([(430, 338), (440, 290), (446, 240), (428, 200)], 2)
+    inf = smooth([(430, 338), (402, 312), (376, 292), (352, 282)], 2)
+    for tr in (tallo, sup, inf):
+        soft_c(base, trazo(tr, 34, OSC + (190,), 8, 11), 7)
+    for tr in (tallo, sup, inf):
+        soft_c(base, trazo(tr, 30, (248, 216, 192, 255)), 3)
+    for tr in (tallo, sup, inf):
+        soft_c(base, trazo(tr, 9, LUZ + (190,), -5, -6), 4)
+    # fosa triangular (entre las dos ramas del antihélix)
+    soft_c(base, lambda x: x.polygon([sp((408, 238)), sp((436, 238)), sp((430, 304)), sp((394, 290))], fill=ROSA + (175,)), 6)
+    # concha y conducto auditivo
+    soft_c(base, lambda x: x.ellipse((sp((350, 392)), sp((438, 508))), fill=OSC + (150,)), 14)
+    soft_c(base, lambda x: x.ellipse((sp((352, 436)), sp((388, 480))), fill=(84, 48, 40, 240)), 4)
+    # trago y antitrago: relieves suaves
+    for box, sh in (((322, 424, 372, 500), (7, 9)), ((388, 522, 446, 572), (6, 8))):
+        x0, y0, x1, y1 = box
+        soft_c(base, lambda x, b=box, o=sh: x.ellipse((sp((b[0] + o[0], b[1] + o[1])), sp((b[2] + o[0], b[3] + o[1]))), fill=OSC + (150,)), 5)
+        soft_c(base, lambda x, b=box: x.ellipse((sp((b[0], b[1])), sp((b[2], b[3]))), fill=(248, 216, 192, 255)), 2)
+        soft_c(base, lambda x, b=box: x.ellipse((sp((b[0] + 6, b[1] + 6)), sp((b[0] + 28, b[1] + 28))), fill=LUZ + (200,)), 5)
+    # lóbulo
+    soft_c(base, lambda x: x.ellipse((sp((372, 600)), sp((466, 690))), fill=CLA + (140,)), 14)
     return base
 
 
