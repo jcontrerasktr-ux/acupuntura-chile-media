@@ -1,0 +1,25 @@
+{
+  "tag": "MEDICINA CHINA · HISTORIA",
+  "hook": "¿Sabías que la medicina china tiene más de *2.000* años?",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {
+      "voz": "¿Sabías que la medicina china tiene más de dos mil años de historia?",
+      "ilu": "pergamino",
+      "etiqueta": "Historia",
+      "guia": "saluda"
+    },
+    {
+      "voz": "Uno de sus textos más antiguos habla de vivir en equilibrio con las estaciones.",
+      "ilu": "yinyang",
+      "etiqueta": "Medicina china",
+      "guia": "quieta"
+    },
+    {
+      "voz": "Cuidar tus hábitos diarios también cuenta. Conoce más en AcupunturaChile.",
+      "ilu": "cierre"
+    }
+  ]
+}

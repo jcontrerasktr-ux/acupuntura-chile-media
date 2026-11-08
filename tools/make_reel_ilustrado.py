@@ -15,7 +15,7 @@ Spec:
     {"voz": "...", "ilu": "cierre"}
   ]
 }
-Ilustraciones: punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
+Ilustraciones: pergamino (texto antiguo que se escribe) y yinyang (con las cuatro estaciones) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
 Todos los dibujos son originales y usan la paleta de la marca. Nunca copiar ilustraciones de otras cuentas.
 """
 import json
@@ -429,7 +429,234 @@ def ilu_punto(t, lt, sc):
     return out
 
 
-ILU = {"punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos}
+# ---------------------------------------------------------------- historia: pergamino y yin-yang con estaciones
+import random
+
+PERG_COLS = 7
+
+
+def base_pergamino():
+    im = Image.new("RGBA", (CW * SS, CH * SS), (0, 0, 0, 0))
+    soft(im, lambda x: x.ellipse((sp((150, 640)), sp((650, 720))), fill=(0, 0, 0, 0)), 4)
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).ellipse((sp((190, 650)), sp((610, 705))), fill=(8, 18, 28, 150))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(16 * SS)))
+    m = mask_new()
+    ImageDraw.Draw(m).rectangle((sp((196, 215)), sp((604, 605))), fill=255)
+    papel = shaded(m, light=(251, 240, 214), dark=(212, 182, 134), r=24)
+    soft(papel, lambda x: x.rectangle((sp((196, 205)), sp((604, 262))), fill=(80, 50, 30, 150)), 12)     # sombra de la vara superior
+    soft(papel, lambda x: x.rectangle((sp((196, 560)), sp((604, 615))), fill=(80, 50, 30, 120)), 12)
+    im.alpha_composite(papel)
+    for y0, y1 in ((182, 236), (582, 636)):
+        mr = mask_new()
+        dr = ImageDraw.Draw(mr)
+        dr.rounded_rectangle((sp((166, y0)), sp((634, y1))), 26 * SS, fill=255)
+        vara = shaded(mr, light=(196, 138, 96), dark=(96, 58, 40), r=11)
+        im.alpha_composite(vara)
+        d = ImageDraw.Draw(im)
+        d.line([sp((190, y0 + 12)), sp((610, y0 + 12))], fill=(236, 190, 150, 170), width=5 * SS)
+        for ex in (150, 650):
+            d.ellipse((sp((ex - 14, y0 + 4)), sp((ex + 14, y1 - 4))), fill=(238, 214, 170, 255), outline=(150, 108, 76, 255), width=3 * SS)
+    return im
+
+
+def ilu_pergamino(t, lt, sc):
+    if "perg" not in _BASES:
+        _BASES["perg"] = base_pergamino()
+    im = _BASES["perg"].copy()
+    d = ImageDraw.Draw(im)
+    rnd = random.Random(7)
+    total = PERG_COLS * 9
+    visibles = int(min(1.0, lt / 3.2) * total)
+    n = 0
+    for c in range(PERG_COLS):
+        x = 250 + c * 50
+        y = 272
+        for j in range(9):
+            h = rnd.choice((14, 20, 26, 18))
+            ancho = rnd.choice((18, 24, 30))
+            ticks = rnd.random() < 0.4
+            if n < visibles:
+                lado = rnd.choice((-1, 1))
+                d.rounded_rectangle((sp((x - 2.5, y)), sp((x + 2.5, y + h))), 2 * SS, fill=(74, 50, 40, 225))
+                d.line([sp((x, y + h * 0.35)), sp((x + lado * ancho * 0.55, y + h * 0.35 + 6))], fill=(74, 50, 40, 215), width=5 * SS)
+                if ticks:
+                    d.line([sp((x - ancho * 0.45, y + h)), sp((x + ancho * 0.4, y + h - 4))], fill=(74, 50, 40, 200), width=4 * SS)
+            n += 1
+            y += h + 10
+    if lt > 3.0:      # sello rojo
+        a = min(1.0, (lt - 3.0) / 0.5)
+        sx, sy = 520, 520
+        d.rounded_rectangle((sp((sx - 30, sy - 30)), sp((sx + 30, sy + 30))), 8 * SS, fill=(196, 64, 54, int(235 * a)))
+        d.rectangle((sp((sx - 17, sy - 17)), sp((sx + 17, sy + 17))), outline=(250, 226, 214, int(230 * a)), width=4 * SS)
+        d.rectangle((sp((sx - 6, sy - 6)), sp((sx + 6, sy + 6))), fill=(250, 226, 214, int(230 * a)))
+    out = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    out.alpha_composite(im, (0, int(7 * SS * math.sin(lt * 1.8))))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+def base_yinyang():
+    R = 190
+    n = 2 * R * SS
+    lay = Image.new("RGBA", (n, n), (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    clara, osc = (244, 249, 253), (30, 66, 92)
+    c = R * SS
+    box = (0, 0, n - 1, n - 1)
+    d.ellipse(box, fill=clara + (255,))
+    d.pieslice(box, 270, 90, fill=osc + (255,))
+    r2 = R * SS // 2
+    d.ellipse((c - r2, c - 2 * r2, c + r2, c), fill=clara + (255,))
+    d.ellipse((c - r2, c, c + r2, c + 2 * r2), fill=osc + (255,))
+    r3 = R * SS // 8
+    d.ellipse((c - r3, c - r2 - r3, c + r3, c - r2 + r3), fill=osc + (255,))
+    d.ellipse((c - r3, c + r2 - r3, c + r3, c + r2 + r3), fill=clara + (255,))
+    # volumen: luz arriba a la izquierda, sombra abajo a la derecha
+    yy, xx = np.mgrid[0:n, 0:n].astype(np.float32)
+    lit = 1.12 - 0.34 * np.clip(((xx - c) * 0.6 + (yy - c) * 0.8) / c * 0.5 + 0.5, 0, 1)
+    rgb = np.asarray(lay.convert("RGB"), dtype=np.float32) * lit[..., None]
+    a = np.asarray(lay.getchannel("A"))
+    lay = Image.fromarray(np.dstack([np.clip(rgb, 0, 255), a]).astype(np.uint8), "RGBA")
+    ImageDraw.Draw(lay).ellipse(box, outline=(170, 200, 222, 255), width=4 * SS)
+    return lay
+
+
+def ilu_yinyang(t, lt, sc):
+    if "yy" not in _BASES:
+        _BASES["yy"] = base_yinyang()
+    cx, cy = 400, 410
+    im = Image.new("RGBA", (CW * SS, CH * SS), (0, 0, 0, 0))
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).ellipse((sp((cx - 175, cy + 150)), sp((cx + 175, cy + 215))), fill=(6, 16, 26, 130))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(18 * SS)))
+    giro = _BASES["yy"].rotate(-lt * 28, resample=Image.BICUBIC)
+    im.alpha_composite(giro, (int((cx - 190) * SS), int((cy - 190) * SS)))
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(dyn)
+    estaciones = [(122, 196, 120), (255, 208, 64), (234, 142, 62), (166, 214, 240)]
+    d = ImageDraw.Draw(im)
+    for i, col in enumerate(estaciones):
+        ang = lt * 0.55 + i * math.pi / 2 - math.pi / 4
+        x, y = cx + 290 * math.cos(ang), cy + 290 * math.sin(ang)
+        r = 30 * SS
+        d.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=tuple(int(v * 0.72) for v in col) + (255,))
+        r2 = 24 * SS
+        d.ellipse((x * SS - r2 - 3 * SS, y * SS - r2 - 3 * SS, x * SS + r2 - 3 * SS, y * SS + r2 - 3 * SS), fill=col + (255,))
+        rh = 8 * SS
+        d.ellipse((x * SS - 12 * SS - rh, y * SS - 12 * SS - rh, x * SS - 12 * SS + rh, y * SS - 12 * SS + rh), fill=(255, 255, 255, 170))
+        dd.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=col + (90,))
+    out = Image.alpha_composite(im, halo(dyn, r=16, k=0.8))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+# ---------------------------------------------------------------- guía: personaje propio de AcupunturaChile
+GS, GX, GY = 0.78, 120, 806          # escala y posición de los pies en el lienzo 800x820
+G_TUN, G_TUN_L, G_TUN_D = (57, 93, 119), (104, 148, 178), (30, 58, 80)
+G_PEL, G_PEL_L = (30, 24, 26), (92, 72, 68)
+
+
+def gt(x, y):
+    return (GX + x * GS, GY + y * GS)
+
+
+def gpoly(pts):
+    return [sp(gt(*q)) for q in pts]
+
+
+def gmask_poly(pts, grow=3):
+    m = mask_new()
+    ImageDraw.Draw(m).polygon(gpoly(smooth(pts, grow)), fill=255)
+    return m
+
+
+def gmask_ell(cx, cy, rx, ry):
+    m = mask_new()
+    ImageDraw.Draw(m).ellipse((sp(gt(cx - rx, cy - ry)), sp(gt(cx + rx, cy + ry))), fill=255)
+    return m
+
+
+def gline(d, pts, w, fill):
+    d.line([sp(gt(*q)) for q in pts], fill=fill, width=max(1, int(w * GS * SS)), joint="curve")
+    for q in (pts[0], pts[-1]):
+        r = w * GS * SS / 2
+        x, y = sp(gt(*q))
+        d.ellipse((x - r, y - r, x + r, y + r), fill=fill)
+
+
+def base_guia():
+    im = Image.new("RGBA", (CW * SS, CH * SS), (0, 0, 0, 0))
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).ellipse((sp(gt(-90, -14)), sp(gt(90, 16))), fill=(6, 16, 26, 140))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(8 * SS)))
+    # piernas y zapatos
+    for x0 in (-44, 6):
+        im.alpha_composite(shaded(gmask_poly([(x0, -150), (x0 + 38, -150), (x0 + 36, -30), (x0 + 2, -30)], 2), light=(86, 98, 128), dark=(30, 36, 54), r=7))
+    for x0, x1 in ((-56, 0), (2, 58)):
+        im.alpha_composite(shaded(gmask_ell((x0 + x1) / 2, -16, (x1 - x0) / 2, 17), light=(176, 122, 90), dark=(84, 52, 38), r=6))
+    # túnica
+    cuerpo = [(-50, -278), (50, -278), (72, -214), (68, -112), (0, -100), (-68, -112), (-72, -214)]
+    im.alpha_composite(shaded(gmask_poly(cuerpo, 3), light=G_TUN_L, dark=G_TUN_D, r=16))
+    d = ImageDraw.Draw(im)
+    im.alpha_composite(shaded(gmask_poly([(-70, -176), (70, -176), (68, -152), (-68, -152)], 1), light=(255, 224, 120), dark=(214, 150, 30), r=5))   # faja amarilla
+    im.alpha_composite(shaded(gmask_poly([(-30, -282), (30, -282), (0, -226)], 1), light=(250, 252, 255), dark=(190, 206, 222), r=5))               # cuello blanco
+    gline(d, [(-30, -282), (0, -226), (30, -282)], 3, (140, 168, 190, 255))
+    # brazo izquierdo (colgando, del lado del lector a la derecha)
+    brazo = mask_new()
+    mline(ImageDraw.Draw(brazo), [sp(gt(60, -262)), sp(gt(78, -190)), sp(gt(70, -128))] and [gt(60, -262), gt(78, -190), gt(70, -128)], 32 * GS)
+    im.alpha_composite(shaded(brazo, light=G_TUN_L, dark=G_TUN_D, r=8))
+    im.alpha_composite(shaded(gmask_ell(70, -112, 17, 17), light=SKIN_L, dark=SKIN_D, r=5))
+    # cabeza
+    im.alpha_composite(shaded(gmask_ell(0, -345, 64, 62), light=SKIN_L, dark=SKIN_D, r=14))
+    hair = gmask_ell(0, -362, 71, 70)
+    ImageDraw.Draw(hair).ellipse((sp(gt(-58, -386)), sp(gt(58, -280))), fill=0)
+    im.alpha_composite(shaded(hair, light=G_PEL_L, dark=G_PEL, r=10))
+    im.alpha_composite(shaded(gmask_ell(0, -436, 27, 25), light=G_PEL_L, dark=G_PEL, r=8))                 # moño
+    d = ImageDraw.Draw(im)
+    d.ellipse((sp(gt(-17, -419)), sp(gt(17, -408))), fill=(255, 205, 60, 255))                             # cinta amarilla
+    # cara
+    for ex in (-26, 26):
+        d.ellipse((sp(gt(ex - 13, -358)), sp(gt(ex + 13, -326))), fill=(252, 250, 247, 255))
+        d.ellipse((sp(gt(ex - 9, -355)), sp(gt(ex + 9, -331))), fill=(70, 44, 34, 255))
+        d.ellipse((sp(gt(ex - 4.5, -349)), sp(gt(ex + 4.5, -338))), fill=(16, 10, 10, 255))
+        d.ellipse((sp(gt(ex - 7, -354)), sp(gt(ex - 1, -347))), fill=(255, 255, 255, 255))
+        d.arc((sp(gt(ex - 17, -376)), sp(gt(ex + 17, -344))), 205, 335, fill=(60, 40, 34, 255), width=int(4 * GS * SS))
+    for ex in (-42, 42):
+        soft(im, lambda x, ex=ex: x.ellipse((sp(gt(ex - 14, -326)), sp(gt(ex + 14, -308))), fill=(230, 110, 110, 150)), 5)
+    d.arc((sp(gt(-17, -322)), sp(gt(17, -296))), 20, 160, fill=(150, 70, 70, 255), width=int(4 * GS * SS))
+    return im
+
+
+def guia_layer(lt, gesto):
+    if "guia" not in _BASES:
+        _BASES["guia"] = base_guia()
+    im = _BASES["guia"].copy()
+    d = ImageDraw.Draw(im)
+    if (lt % 3.4) < 0.13:       # parpadeo
+        for ex in (-26, 26):
+            d.ellipse((sp(gt(ex - 15, -360)), sp(gt(ex + 15, -324))), fill=SKIN_L + (255,))
+            d.arc((sp(gt(ex - 13, -349)), sp(gt(ex + 13, -331))), 10, 170, fill=(60, 40, 34, 255), width=int(4 * GS * SS))
+    # brazo animado (del lado izquierdo del lector)
+    if gesto == "quieta":
+        pts = [(-60, -262), (-80, -192), (-74, -128)]
+        mano = pts[-1]
+    else:
+        pts = [(-60, -262), (-104, -228), (-116 + 14 * math.sin(lt * 7), -318)]
+        mano = pts[-1]
+    brazo = mask_new()
+    mline(ImageDraw.Draw(brazo), [gt(*q) for q in pts], 32 * GS)
+    im.alpha_composite(shaded(brazo, light=G_TUN_L, dark=G_TUN_D, r=8))
+    im.alpha_composite(shaded(gmask_ell(mano[0], mano[1], 18, 18), light=SKIN_L, dark=SKIN_D, r=5))
+    out = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    out.alpha_composite(im, (0, int(4 * SS * math.sin(lt * 3))))
+    return out
+
+
+ILU = {"punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos,
+       "pergamino": ilu_pergamino, "yinyang": ilu_yinyang}
 
 
 # ---------------------------------------------------------------- subtítulos
@@ -530,7 +757,10 @@ def main():
             paste_center(f, aviso, 1500, ease((lt - 1.0) / 0.5) * a_out)
         else:
             k, cy = (1.0, 1105) if sc["ilu"] == "punto" else (1.15, 1150)
-            ill = ILU[sc["ilu"]](tt, lt, sc).resize((int(CW * k), int(CH * k)), Image.LANCZOS)
+            ill = ILU[sc["ilu"]](tt, lt, sc)
+            if sc.get("guia"):
+                ill.alpha_composite(guia_layer(lt, sc["guia"]))
+            ill = ill.resize((int(CW * k), int(CH * k)), Image.LANCZOS)
             paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 50)
         d = ImageDraw.Draw(f)
         d.rounded_rectangle((90, 1620, 90 + int((W - 180) * tt / total), 1630), 5, fill=YEL + (230,))
