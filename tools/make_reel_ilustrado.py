@@ -15,7 +15,7 @@ Spec:
     {"voz": "...", "ilu": "cierre"}
   ]
 }
-Ilustraciones: pergamino (texto antiguo que se escribe) y yinyang (con los cinco elementos) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
+Ilustraciones: tarjeta (ícono de la marca "icono": leaf|moon|body|head|wave|curve y "chip": MITO|VERDAD|texto), pergamino (texto antiguo que se escribe) y yinyang (con los cinco elementos) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
 Todos los dibujos son originales y usan la paleta de la marca. Nunca copiar ilustraciones de otras cuentas.
 """
 import json
@@ -655,8 +655,30 @@ def guia_layer(lt, gesto):
     return out
 
 
+def ilu_tarjeta(t, lt, sc):
+    """Tarjeta con un ícono de la marca (leaf, moon, body, head, wave, curve) y una etiqueta opcional (MITO, VERDAD...)."""
+    im = Image.new("RGBA", (CW * SS, CH * SS), (0, 0, 0, 0))
+    f = SS / 1.15
+    ic = icon(sc.get("icono", "leaf"))
+    k = 0.8 * f * (1 + 0.025 * math.sin(lt * 2.2))
+    ic = ic.resize((int(ic.width * k), int(ic.height * k)), Image.LANCZOS)
+    cx = CW * SS // 2 + (60 * SS if sc.get("guia") else 0)
+    sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(sh).ellipse((cx - 150 * SS, 640 * SS, cx + 150 * SS, 690 * SS), fill=(6, 16, 26, 120))
+    im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14 * SS)))
+    im.alpha_composite(ic, (cx - ic.width // 2, int(420 * SS - ic.height / 2 + 6 * SS * math.sin(lt * 1.8))))
+    if sc.get("chip"):
+        col = {"MITO": CORAL, "VERDAD": (60, 140, 110)}.get(sc["chip"], TEAL_M)
+        pl = pill_layer(sc["chip"], 50, fill=col, pad=(50, 16))
+        pl = pl.resize((int(pl.width * f), int(pl.height * f)), Image.LANCZOS)
+        im.alpha_composite(pl, (cx - pl.width // 2, int(100 * SS)))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(im), sc["etiqueta"], 190, 40)
+    return im
+
+
 ILU = {"punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos,
-       "pergamino": ilu_pergamino, "yinyang": ilu_yinyang}
+       "pergamino": ilu_pergamino, "yinyang": ilu_yinyang, "tarjeta": ilu_tarjeta}
 
 
 # ---------------------------------------------------------------- subtítulos

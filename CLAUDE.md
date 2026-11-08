@@ -6,14 +6,15 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 
 ## Cadencia
 - 1 Reel por semana (miércoles, tarde).
-- 5 historias por semana (desde el 8 de noviembre de 2026), una por día, rotando 4 tipos:
-  - Lunes: servicios, sedes o empresas (formato `tip`; ver pilar "Servicios y empresas"). En semana de fecha especial, cuenta regresiva o mensaje de la fecha.
-  - Martes: mito o verdad (`mito`).
-  - Jueves: tip práctico de hábitos y bienestar (`tip`).
-  - Sábado: pregunta de la semana para responder por mensaje (`pregunta`).
-  - Domingo: tip suave de descanso, respiración o rutina (`tip`).
-  - Las historias NO llevan puntos de acupuntura (decisión de Julio, 8 nov 2026). Formato preferido en video: de 20 a 50 s (Instagram admite hasta 60 s en historias), ilustraciones animadas con `tools/make_reel_ilustrado.py` (pergamino, yinyang, meridianos, columna, movimiento) y datos históricos o de bienestar de la medicina china, con la guía de AcupunturaChile (personaje propio, `"guia": "saluda"` o `"quieta"` en la escena). Referencia de estilo que mostró Julio: cuenta de medicina china con personaje guía, subtítulos que resaltan la palabra y brillos; solo inspiración, nunca copiar sus dibujos, personaje, textos ni videos. Datos históricos: solo hechos verificados en una fuente y sin promesas (ej.: el Huangdi Neijing, compilado entre el siglo IV a. C. y el III d. C., dos textos de 81 capítulos cada uno: Suwen y Lingshu).
-  - Con 5 historias a la semana los 14 temas de `plan/temas.json` se agotan rápido: si ya se usó un tema en historia, se puede retomar con otro ángulo y otro texto (nunca repetir el mismo texto); revisar `plan/historial.json` antes.
+- 5 historias por semana (desde el 8 de noviembre de 2026), una por día. TODAS son videos animados de 30 a 45 segundos (decisión de Julio, 8 nov 2026), con voz, subtítulos palabra por palabra y la guía de AcupunturaChile. Tipos por día:
+  - Lunes: servicios, sedes o empresas. En semana de fecha especial, cuenta regresiva o mensaje de la fecha.
+  - Martes: mito o verdad (escenas `tarjeta` con `"chip": "MITO"` y luego `"chip": "VERDAD"`).
+  - Jueves: tip práctico de hábitos y bienestar.
+  - Sábado: pregunta de la semana para responder por mensaje directo (cerrar la narración invitando a responder).
+  - Domingo: dato histórico o de bienestar de la medicina china, o tip suave de descanso y rutina.
+- Las historias NO llevan puntos de acupuntura (decisión de Julio, 8 nov 2026). Herramienta: `python3 tools/make_reel_ilustrado.py spec.json media/.../historia.mp4 media/.../portada.jpg` (ejemplo: `media/2026-11-08-neijing-historia/spec.json`). Ilustraciones disponibles: `tarjeta` (ícono de marca `"icono"`: leaf, moon, body, head, wave, curve; `"chip"` opcional), `pergamino` (con `"rotulo"` opcional para mostrar un dato en pantalla), `yinyang` (cinco elementos), `meridianos`, `columna`, `movimiento` y `cierre` (siempre la última escena). Cada escena puede llevar `"guia": "saluda"` o `"quieta"` (personaje propio). Duración total entre 30 y 45 s: unas 6 a 8 escenas con 10 a 16 palabras de narración cada una; `"voz_velocidad": 0.95` si hace falta. El tag, el gancho y `"cierre_texto": "Guarda y comparte esta historia"` van en el spec.
+- IMPORTANTE (tiempo): generar un video de 45 s tarda unos 8 minutos y un comando de Bash corta a los 10. Lanzarlo en segundo plano (`nohup python3 tools/make_reel_ilustrado.py ... > gen.log 2>&1 &`) y revisar el log cada 60 s con `sleep 60` hasta ver "ok". Antes: `pip install --break-system-packages -r tools/requirements.txt`. Para publicar: `create_story` con `video_url` (primero URL de GitHub Pages, y si falla sin publicar, una sola vez la raw; ver paso 7).
+- Referencia de estilo que mostró Julio: cuenta de medicina china con personaje guía, subtítulos que resaltan la palabra y brillos; solo inspiración, nunca copiar sus dibujos, personaje, textos ni videos. Datos históricos: solo hechos verificados en una fuente y sin promesas (ej.: el Huangdi Neijing, compilado entre el siglo IV a. C. y el III d. C., dos textos de 81 capítulos cada uno: Suwen y Lingshu). Temas: de `plan/temas.json`; con 5 historias a la semana se agotan rápido, así que se puede retomar un tema con otro ángulo y otro texto (nunca repetir el mismo texto); revisar `plan/historial.json` antes.
 
 ## Reglas de contenido (obligatorias)
 1. Contenido original. Las tendencias que se investigan en la web sirven solo de inspiración para formatos y ganchos. Nunca copiar videos, textos ni imágenes de otras cuentas.
