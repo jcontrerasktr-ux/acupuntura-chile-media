@@ -510,7 +510,7 @@ def main():
         stdin=subprocess.PIPE)
     logo_l = logo(420)
     web_l = text_layer(web, 46, color=YEL, bold=False, maxw=800)
-    save_l = text_layer("Guarda y comparte este Reel", 40, maxw=800)
+    save_l = text_layer(spec.get("cierre_texto", "Guarda y comparte este Reel"), 40, maxw=800)
     aviso = text_layer("Ante síntomas intensos o nuevos, consulta a un profesional de salud", 30, color=(205, 222, 236), bold=False, maxw=860, line_h=1.2)
     n = int(total * FPS)
     for fi in range(n):
