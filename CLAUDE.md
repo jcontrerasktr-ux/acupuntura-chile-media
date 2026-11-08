@@ -6,7 +6,13 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 
 ## Cadencia
 - 1 Reel por semana (miércoles, tarde).
-- 2 historias por semana: martes (mito o verdad) y sábado (tip o pregunta).
+- 5 historias por semana (desde el 8 de noviembre de 2026), una por día, rotando 4 tipos:
+  - Lunes: servicios, sedes o empresas (formato `tip`; ver pilar "Servicios y empresas"). En semana de fecha especial, cuenta regresiva o mensaje de la fecha.
+  - Martes: mito o verdad (`mito`).
+  - Jueves: tip práctico de hábitos y bienestar (`tip`).
+  - Sábado: pregunta de la semana para responder por mensaje (`pregunta`).
+  - Domingo: tip suave de descanso, respiración o rutina (`tip`).
+  - Con 5 historias a la semana los 14 temas de `plan/temas.json` se agotan rápido: si ya se usó un tema en historia, se puede retomar con otro ángulo y otro texto (nunca repetir el mismo texto); revisar `plan/historial.json` antes.
 
 ## Reglas de contenido (obligatorias)
 1. Contenido original. Las tendencias que se investigan en la web sirven solo de inspiración para formatos y ganchos. Nunca copiar videos, textos ni imágenes de otras cuentas.
