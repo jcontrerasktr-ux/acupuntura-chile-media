@@ -306,7 +306,7 @@ PUNTOS = {
     "cara": {"Yintang": (400, 322, "entre las cejas"), "Taiyang": (232, 345, "en la sien"), "Taiyang ": (568, 345, "en la sien")},
     "mano": {"Hegu": (306, 432, "entre el pulgar y el índice")},
     "pierna": {"Zusanli": (436, 292, "cuatro dedos bajo la rodilla, por fuera")},
-    "oreja": {"Shenmen": (412, 252, "parte alta de la oreja")},
+    "oreja": {"Shenmen": (406, 222, "parte alta de la oreja")},
 }
 
 
@@ -390,61 +390,61 @@ def soft_c(base, drawfn, blur=10):
 
 
 def base_oreja():
-    """Oreja con hélix, antihélix en Y (fosa triangular donde va Shenmen), concha, trago, antitrago y lóbulo."""
-    contorno = [(430, 102), (480, 120), (522, 164), (552, 250), (552, 360), (528, 470), (492, 570), (456, 650),
-                (412, 700), (368, 692), (342, 652), (344, 580), (334, 520), (322, 450), (330, 370), (336, 285),
-                (342, 222), (352, 170), (372, 128), (392, 108)]
+    """Oreja de aspecto suave y pálido (dibujo propio): hélix con surco, antihélix en Y, fosa triangular, concha, trago y lóbulo."""
+    contorno = [(398, 108), (468, 116), (538, 166), (584, 258), (600, 370), (582, 482), (538, 574), (484, 654), (432, 706),
+                (386, 712), (350, 690), (336, 642), (338, 590), (330, 540), (322, 480), (330, 420), (336, 350),
+                (334, 290), (320, 240), (300, 200), (282, 170), (288, 136), (318, 116), (358, 106)]
     m = mask_new()
     dm = ImageDraw.Draw(m)
     dm.polygon([sp(q) for q in smooth(contorno, 4)], fill=255)
-    dm.polygon([sp(q) for q in smooth([(350, 410), (326, 428), (318, 462), (336, 500), (372, 506), (384, 470)], 3)], fill=255)   # trago
-    base = shaded(m, r=30)
-    ROSA, OSC, CLA, LUZ = (150, 96, 78), (120, 74, 60), (252, 226, 206), (255, 242, 228)
+    base = shaded(m, light=(253, 233, 220), dark=(226, 160, 142), r=34)
+    ROSA, OSC, LUZ = (222, 134, 122), (196, 100, 92), (255, 248, 240)
 
     def trazo(tr, w, col, dx=0, dy=0):
         return lambda x: thick(x, [(q[0] + dx, q[1] + dy) for q in tr], w, col)
 
-    # hélix: reborde con volumen (sombra abajo-derecha, luz arriba-izquierda) y surco interior
-    helix = smooth([(366, 212), (394, 160), (452, 150), (500, 192), (522, 270), (518, 372), (494, 470), (466, 556)], 2)
-    soft_c(base, trazo(helix, 30, ROSA + (150,), 7, 10), 8)
-    soft_c(base, trazo(helix, 24, (248, 216, 192, 255)), 3)
-    soft_c(base, trazo(helix, 8, LUZ + (200,), -5, -6), 4)
-    surco = smooth([(374, 230), (402, 186), (450, 178), (486, 214), (500, 280), (494, 372), (472, 458)], 2)
-    soft_c(base, trazo(surco, 6, OSC + (170,)), 2)
-    # escafa: canal hundido entre hélix y antihélix
-    soft_c(base, trazo(smooth([(420, 215), (455, 232), (468, 300), (458, 400), (440, 470)], 2), 34, ROSA + (110,)), 12)
+    # hélix: reborde claro con surco salmón en su cara interior
+    rim = smooth([(322, 176), (362, 132), (440, 130), (512, 178), (550, 262), (562, 372), (542, 470), (504, 556)], 2)
+    surco = smooth([(352, 192), (388, 162), (440, 164), (490, 204), (514, 272), (524, 370), (508, 458), (474, 536)], 2)
+    soft_c(base, trazo(rim, 30, ROSA + (150,), 7, 10), 8)
+    soft_c(base, trazo(rim, 22, (255, 240, 230, 200)), 6)
+    soft_c(base, trazo(surco, 9, ROSA + (215,)), 2.5)
+    soft_c(base, trazo(surco, 4, OSC + (150,), 1, 1), 1.5)
+    # escafa (entre hélix y antihélix): sombra suave
+    soft_c(base, trazo(smooth([(430, 210), (468, 250), (478, 330), (468, 420), (446, 500)], 2), 40, ROSA + (150,)), 12)
     # antihélix en Y
-    tallo = [(404, 520), (414, 450), (426, 385), (430, 338)]
-    sup = smooth([(430, 338), (440, 290), (446, 240), (428, 200)], 2)
-    inf = smooth([(430, 338), (402, 312), (376, 292), (352, 282)], 2)
+    tallo = smooth([(412, 560), (430, 480), (442, 400), (442, 318)], 2)
+    sup = smooth([(442, 318), (454, 262), (448, 212), (418, 182)], 2)
+    inf = smooth([(442, 318), (400, 282), (356, 258), (322, 244)], 2)
     for tr in (tallo, sup, inf):
-        soft_c(base, trazo(tr, 34, OSC + (190,), 8, 11), 7)
+        soft_c(base, trazo(tr, 40, OSC + (175,), 9, 12), 8)
     for tr in (tallo, sup, inf):
-        soft_c(base, trazo(tr, 30, (248, 216, 192, 255)), 3)
+        soft_c(base, trazo(tr, 34, (255, 238, 226, 255)), 6)
     for tr in (tallo, sup, inf):
-        soft_c(base, trazo(tr, 9, LUZ + (190,), -5, -6), 4)
-    # fosa triangular (entre las dos ramas del antihélix)
-    soft_c(base, lambda x: x.polygon([sp((408, 238)), sp((436, 238)), sp((430, 304)), sp((394, 290))], fill=ROSA + (175,)), 6)
-    # concha y conducto auditivo
-    soft_c(base, lambda x: x.ellipse((sp((350, 392)), sp((438, 508))), fill=OSC + (200,)), 12)
-    soft_c(base, lambda x: x.ellipse((sp((352, 436)), sp((388, 480))), fill=(84, 48, 40, 240)), 4)
-    # trago y antitrago: relieves suaves
-    for box, sh in (((330, 428, 376, 500), (7, 9)), ((388, 522, 446, 572), (6, 8))):
-        x0, y0, x1, y1 = box
-        soft_c(base, lambda x, b=box, o=sh: x.ellipse((sp((b[0] + o[0], b[1] + o[1])), sp((b[2] + o[0], b[3] + o[1]))), fill=OSC + (150,)), 5)
-        soft_c(base, lambda x, b=box: x.ellipse((sp((b[0], b[1])), sp((b[2], b[3]))), fill=(248, 216, 192, 255)), 2)
-        soft_c(base, lambda x, b=box: x.ellipse((sp((b[0] + 6, b[1] + 6)), sp((b[0] + 28, b[1] + 28))), fill=LUZ + (200,)), 5)
-    # lóbulo
-    soft_c(base, lambda x: x.ellipse((sp((372, 600)), sp((466, 690))), fill=CLA + (140,)), 14)
-    # contacto oscuro bajo el antihélix y el trago (da más relieve)
-    soft_c(base, trazo(tallo, 6, (110, 66, 54, 150), 17, 6), 3)
-    soft_c(base, trazo(inf, 5, (110, 66, 54, 150), 0, 17), 3)
-    # una oreja real es más ancha que larga/2.6: se ensancha un 24 % alrededor del centro
-    k, cx = 1.24, 440 * SS
-    x0, x1 = int(280 * SS), int(600 * SS)
+        soft_c(base, trazo(tr, 10, LUZ + (220,), -6, -7), 5)
+    # surco profundo bajo la rama inferior (línea salmón más marcada)
+    linea = smooth([(324, 262), (366, 282), (410, 306), (440, 340)], 2)
+    soft_c(base, trazo(linea, 9, (212, 108, 98, 230)), 2.5)
+    # fosa triangular (zona de Shenmen): hondonada suave entre las ramas
+    soft_c(base, lambda x: x.polygon([sp((352, 190)), sp((430, 196)), sp((438, 262)), sp((350, 240))], fill=ROSA + (120,)), 8)
+    # concha, conducto y trago
+    soft_c(base, lambda x: x.ellipse((sp((338, 322)), sp((440, 500))), fill=OSC + (150,)), 14)
+    soft_c(base, lambda x: x.ellipse((sp((350, 392)), sp((392, 446))), fill=(170, 84, 78, 215)), 6)
+    tr_pts = smooth([(330, 392), (352, 380), (372, 410), (366, 462), (334, 478), (322, 440)], 3)
+    soft_c(base, lambda x: x.polygon([sp((q[0] + 6, q[1] + 8)) for q in tr_pts], fill=OSC + (120,)), 5)
+    soft_c(base, lambda x: x.polygon([sp(q) for q in tr_pts], fill=(255, 238, 226, 255)), 3)
+    soft_c(base, trazo(smooth([(334, 392), (354, 392), (368, 414)], 2), 5, ROSA + (200,)), 2)
+    # antitrago y lóbulo
+    soft_c(base, lambda x: x.ellipse((sp((404, 548)), sp((470, 604))), fill=OSC + (110,)), 7)
+    soft_c(base, lambda x: x.ellipse((sp((398, 538)), sp((462, 592))), fill=(255, 238, 226, 255)), 4)
+    for (px, py, rr, al) in ((400, 650, 34, 70), (450, 630, 26, 60), (380, 610, 22, 50), (430, 680, 20, 55)):
+        soft_c(base, lambda x, px=px, py=py, rr=rr, al=al: x.ellipse((sp((px - rr, py - rr)), sp((px + rr, py + rr))), fill=ROSA + (al,)), 10)
+    # más ancha (la silueta sale del dibujo alargado): se ensancha un 20 % con el borde izquierdo fijo
+    k, ax = 1.20, 300 * SS
+    x0, x1 = int(270 * SS), int(640 * SS)
     franja = base.crop((x0, 0, x1, base.height)).resize((int((x1 - x0) * k), base.height), Image.LANCZOS)
     out = Image.new("RGBA", base.size, (0, 0, 0, 0))
-    out.alpha_composite(franja, (int(cx - (cx - x0) * k), 0))
+    out.alpha_composite(franja, (int(ax - (ax - x0) * k), 0))
     return out
 
 
