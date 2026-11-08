@@ -306,7 +306,7 @@ PUNTOS = {
     "cara": {"Yintang": (400, 322, "entre las cejas"), "Taiyang": (232, 345, "en la sien"), "Taiyang ": (568, 345, "en la sien")},
     "mano": {"Hegu": (306, 432, "entre el pulgar y el índice")},
     "pierna": {"Zusanli": (436, 292, "cuatro dedos bajo la rodilla, por fuera")},
-    "oreja": {"Shenmen": (418, 252, "parte alta de la oreja")},
+    "oreja": {"Shenmen": (412, 252, "parte alta de la oreja")},
 }
 
 
@@ -391,13 +391,13 @@ def soft_c(base, drawfn, blur=10):
 
 def base_oreja():
     """Oreja con hélix, antihélix en Y (fosa triangular donde va Shenmen), concha, trago, antitrago y lóbulo."""
-    contorno = [(410, 104), (470, 118), (522, 164), (552, 250), (552, 360), (528, 470), (492, 570), (456, 650),
+    contorno = [(430, 102), (480, 120), (522, 164), (552, 250), (552, 360), (528, 470), (492, 570), (456, 650),
                 (412, 700), (368, 692), (342, 652), (344, 580), (334, 520), (322, 450), (330, 370), (336, 285),
-                (344, 215), (358, 160), (380, 122)]
+                (342, 222), (352, 170), (372, 128), (392, 108)]
     m = mask_new()
     dm = ImageDraw.Draw(m)
     dm.polygon([sp(q) for q in smooth(contorno, 4)], fill=255)
-    dm.ellipse((sp((316, 418)), sp((384, 508))), fill=255)                      # trago
+    dm.polygon([sp(q) for q in smooth([(350, 410), (326, 428), (318, 462), (336, 500), (372, 506), (384, 470)], 3)], fill=255)   # trago
     base = shaded(m, r=30)
     ROSA, OSC, CLA, LUZ = (150, 96, 78), (120, 74, 60), (252, 226, 206), (255, 242, 228)
 
@@ -426,17 +426,26 @@ def base_oreja():
     # fosa triangular (entre las dos ramas del antihélix)
     soft_c(base, lambda x: x.polygon([sp((408, 238)), sp((436, 238)), sp((430, 304)), sp((394, 290))], fill=ROSA + (175,)), 6)
     # concha y conducto auditivo
-    soft_c(base, lambda x: x.ellipse((sp((350, 392)), sp((438, 508))), fill=OSC + (150,)), 14)
+    soft_c(base, lambda x: x.ellipse((sp((350, 392)), sp((438, 508))), fill=OSC + (200,)), 12)
     soft_c(base, lambda x: x.ellipse((sp((352, 436)), sp((388, 480))), fill=(84, 48, 40, 240)), 4)
     # trago y antitrago: relieves suaves
-    for box, sh in (((322, 424, 372, 500), (7, 9)), ((388, 522, 446, 572), (6, 8))):
+    for box, sh in (((330, 428, 376, 500), (7, 9)), ((388, 522, 446, 572), (6, 8))):
         x0, y0, x1, y1 = box
         soft_c(base, lambda x, b=box, o=sh: x.ellipse((sp((b[0] + o[0], b[1] + o[1])), sp((b[2] + o[0], b[3] + o[1]))), fill=OSC + (150,)), 5)
         soft_c(base, lambda x, b=box: x.ellipse((sp((b[0], b[1])), sp((b[2], b[3]))), fill=(248, 216, 192, 255)), 2)
         soft_c(base, lambda x, b=box: x.ellipse((sp((b[0] + 6, b[1] + 6)), sp((b[0] + 28, b[1] + 28))), fill=LUZ + (200,)), 5)
     # lóbulo
     soft_c(base, lambda x: x.ellipse((sp((372, 600)), sp((466, 690))), fill=CLA + (140,)), 14)
-    return base
+    # contacto oscuro bajo el antihélix y el trago (da más relieve)
+    soft_c(base, trazo(tallo, 6, (110, 66, 54, 150), 17, 6), 3)
+    soft_c(base, trazo(inf, 5, (110, 66, 54, 150), 0, 17), 3)
+    # una oreja real es más ancha que larga/2.6: se ensancha un 24 % alrededor del centro
+    k, cx = 1.24, 440 * SS
+    x0, x1 = int(280 * SS), int(600 * SS)
+    franja = base.crop((x0, 0, x1, base.height)).resize((int((x1 - x0) * k), base.height), Image.LANCZOS)
+    out = Image.new("RGBA", base.size, (0, 0, 0, 0))
+    out.alpha_composite(franja, (int(cx - (cx - x0) * k), 0))
+    return out
 
 
 BASES_ZONA = {"cara": base_cara, "mano": base_mano, "pierna": base_pierna, "oreja": base_oreja}
