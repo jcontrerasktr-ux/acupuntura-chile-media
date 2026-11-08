@@ -1,12 +1,77 @@
 {
   "web": "acupuntura-chile.cl",
   "laminas": [
-    {"tipo": "portada", "tag": "GUÍA PARA GUARDAR", "icono": "body", "titulo": "5 pausas de *1 minuto* para tu jornada", "sub": "Desliza"},
-    {"tipo": "paso", "n": 1, "icono": "body", "titulo": "Cambia de postura", "texto": "Cada hora, párate y camina un poco. Tu cuerpo agradece moverse.", "guia": "saluda"},
-    {"tipo": "paso", "n": 2, "icono": "body", "titulo": "Suelta los hombros", "texto": "Sube los hombros hacia las orejas y suéltalos lento. Repite 5 veces.", "guia": "quieta"},
-    {"tipo": "paso", "n": 3, "icono": "head", "titulo": "Mueve el cuello", "texto": "Gira la cabeza suave de lado a lado, sin forzar y sin llegar al dolor.", "guia": "saluda"},
-    {"tipo": "paso", "n": 4, "icono": "wave", "titulo": "Respira profundo", "texto": "Inhala 4 segundos y exhala 6. Puede ayudar a bajar el estrés del día.", "guia": "quieta"},
-    {"tipo": "paso", "n": 5, "icono": "leaf", "titulo": "Descansa la vista", "texto": "Cada 20 minutos, mira algo lejano por 20 segundos.", "guia": "saluda"},
-    {"tipo": "cierre", "titulo": "Guarda y comparte con tu equipo", "texto": "Si el dolor es intenso o nuevo, consulta a un profesional de salud. En AcupunturaChile evaluamos tu caso y armamos un plan a tu medida.", "guia": "quieta"}
+    {
+      "tipo": "portada",
+      "tag": "DATO + GUÍA PARA GUARDAR",
+      "icono": "body",
+      "titulo": "*1 de cada 13* personas vive con dolor de espalda",
+      "sub": "Desliza"
+    },
+    {
+      "tipo": "dato",
+      "tag": "DATO",
+      "numero": "619",
+      "unidad": "millones",
+      "texto": "de personas vivían con dolor lumbar en el mundo en 2020. Se proyectan 843 millones para 2050.",
+      "fuente": "OMS (2023)",
+      "guia": "quieta"
+    },
+    {
+      "tipo": "dato",
+      "tag": "DATO",
+      "numero": "150 a 300",
+      "tam": 150,
+      "unidad": "minutos",
+      "texto": "de actividad física moderada por semana recomienda la OMS a los adultos, y limitar el tiempo sedentario.",
+      "fuente": "OPS/OMS (2020)",
+      "guia": "saluda"
+    },
+    {
+      "tipo": "paso",
+      "n": 1,
+      "icono": "body",
+      "titulo": "Cambia de postura",
+      "texto": "Cada hora, párate y camina un poco. Tu cuerpo agradece moverse.",
+      "guia": "saluda"
+    },
+    {
+      "tipo": "paso",
+      "n": 2,
+      "icono": "body",
+      "titulo": "Suelta los hombros",
+      "texto": "Sube los hombros hacia las orejas y suéltalos lento. Repite 5 veces.",
+      "guia": "quieta"
+    },
+    {
+      "tipo": "paso",
+      "n": 3,
+      "icono": "head",
+      "titulo": "Mueve el cuello",
+      "texto": "Gira la cabeza suave de lado a lado, sin forzar y sin llegar al dolor.",
+      "guia": "saluda"
+    },
+    {
+      "tipo": "paso",
+      "n": 4,
+      "icono": "wave",
+      "titulo": "Respira profundo",
+      "texto": "Inhala 4 segundos y exhala 6. Puede ayudar a bajar el estrés del día.",
+      "guia": "quieta"
+    },
+    {
+      "tipo": "paso",
+      "n": 5,
+      "icono": "leaf",
+      "titulo": "Descansa la vista",
+      "texto": "Cada 20 minutos, mira algo lejano por 20 segundos.",
+      "guia": "saluda"
+    },
+    {
+      "tipo": "cierre",
+      "titulo": "Guárdalo y envíaselo a alguien que pasa el día sentado",
+      "texto": "Si el dolor es intenso o nuevo, consulta a un profesional de salud. En AcupunturaChile evaluamos tu caso y armamos un plan a tu medida.",
+      "guia": "quieta"
+    }
   ]
 }

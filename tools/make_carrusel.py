@@ -8,6 +8,7 @@ Spec:
   "web": "acupuntura-chile.cl",
   "laminas": [
     {"tipo": "portada", "tag": "GUÍA PARA GUARDAR", "icono": "body", "titulo": "5 pausas de *1 minuto* para tu jornada", "sub": "Desliza para verlas"},
+    {"tipo": "dato", "tag": "DATO", "numero": "619", "unidad": "millones", "texto": "Personas con dolor lumbar en el mundo en 2020.", "fuente": "OMS", "guia": "quieta"},
     {"tipo": "paso", "n": 1, "icono": "wave", "titulo": "Cambia de postura", "texto": "Cada hora, párate y camina un poco.", "guia": "saluda"},
     {"tipo": "cierre", "titulo": "Guarda y comparte", "texto": "Si el dolor es intenso o nuevo, consulta a un profesional.", "guia": "quieta"}
   ]
@@ -54,15 +55,35 @@ def lamina(lam, i, n, web):
         lg = logo(300)
         im.alpha_composite(lg, (CW_ // 2 - lg.width // 2, 70))
         tag = pill_layer(lam.get("tag", "GUÍA PARA GUARDAR"), 38, fill=TEAL)
-        im.alpha_composite(tag, (CW_ // 2 - tag.width // 2, 440))
-        ic = esc(icon(lam.get("icono", "leaf")), 0.62)
-        im.alpha_composite(ic, (CW_ // 2 - ic.width // 2, 520))
-        t = text_layer(lam["titulo"], 78, color=WHITE, maxw=900, stroke=1)
-        im.alpha_composite(t, (CW_ // 2 - t.width // 2, 860))
+        im.alpha_composite(tag, (CW_ // 2 - tag.width // 2, 410))
+        ic = esc(icon(lam.get("icono", "leaf")), 0.5)
+        im.alpha_composite(ic, (CW_ // 2 - ic.width // 2, 545))
+        t = text_layer(lam["titulo"], 72, color=WHITE, maxw=900, stroke=1)
+        im.alpha_composite(t, (CW_ // 2 - t.width // 2, 780))
         if lam.get("sub"):
             sb = pill_layer(lam["sub"], 38, fill=YEL, fg=TEAL_D)
-            im.alpha_composite(sb, (CW_ // 2 - sb.width // 2, 860 + t.height + 40))
+            im.alpha_composite(sb, (CW_ // 2 - sb.width // 2, 780 + t.height + 34))
         footer_brand(im, 1260, web)
+    elif tipo == "dato":
+        lg = logo(150)
+        im.alpha_composite(lg, (80, 50))
+        ct = pill_layer(f"{i}/{n}", 32, fill=TEAL_M)
+        im.alpha_composite(ct, (CW_ - 80 - ct.width, 80))
+        tg = pill_layer(lam.get("tag", "DATO"), 34, fill=TEAL)
+        im.alpha_composite(tg, (80, 250))
+        nm = text_layer(lam["numero"], lam.get("tam", 190), color=YEL, maxw=920, align="left", stroke=2)
+        im.alpha_composite(nm, (80, 340))
+        y = 340 + nm.height + 10
+        if lam.get("unidad"):
+            un = text_layer(lam["unidad"], 70, color=WHITE, maxw=900, align="left")
+            im.alpha_composite(un, (80, y))
+            y += un.height + 30
+        tx = text_layer(lam["texto"], 46, bold=False, maxw=880, align="left", line_h=1.3)
+        im.alpha_composite(tx, (80, y))
+        if lam.get("fuente"):
+            fu = text_layer("Fuente: " + lam["fuente"], 28, color=(190, 210, 226), bold=False, maxw=640, align="left")
+            im.alpha_composite(fu, (CW_ - fu.width - 60, CH_ - fu.height - 70))
+        guia(lam, im)
     elif tipo == "cierre":
         lg = logo(300)
         im.alpha_composite(lg, (CW_ // 2 - lg.width // 2, 50))
