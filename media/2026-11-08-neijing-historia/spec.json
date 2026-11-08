@@ -12,14 +12,48 @@
       "guia": "saluda"
     },
     {
-      "voz": "Uno de sus textos más antiguos habla de vivir en equilibrio con las estaciones.",
+      "voz": "Uno de sus libros más antiguos se llama Huangdi Neijing: el Clásico Interno del Emperador Amarillo.",
+      "ilu": "pergamino",
+      "etiqueta": "Historia",
+      "guia": "saluda"
+    },
+    {
+      "voz": "Se fue escribiendo durante siglos, entre el siglo cuatro antes de Cristo y el siglo tres después de Cristo.",
+      "ilu": "pergamino",
+      "etiqueta": "Historia",
+      "rotulo": "Siglo IV a. C. – III d. C.",
+      "guia": "quieta"
+    },
+    {
+      "voz": "Reúne dos textos, y cada uno tiene ochenta y un capítulos.",
+      "ilu": "pergamino",
+      "etiqueta": "Historia",
+      "rotulo": "2 textos · 81 capítulos",
+      "guia": "quieta"
+    },
+    {
+      "voz": "El primero se llama Suwen, que significa preguntas básicas, y explica la teoría de la medicina china.",
+      "ilu": "pergamino",
+      "etiqueta": "Historia",
+      "rotulo": "Suwen · Preguntas básicas",
+      "guia": "saluda"
+    },
+    {
+      "voz": "Usa ideas como el yin y el yang, y los cinco elementos, para hablar de equilibrio.",
       "ilu": "yinyang",
       "etiqueta": "Medicina china",
       "guia": "quieta"
     },
     {
-      "voz": "Cuidar tus hábitos diarios también cuenta. Conoce más en AcupunturaChile.",
+      "voz": "Según esta tradición, la medicina es una forma de cuidar ese equilibrio.",
+      "ilu": "yinyang",
+      "etiqueta": "Medicina china",
+      "guia": "saluda"
+    },
+    {
+      "voz": "Hoy esa mirada sigue inspirando hábitos de bienestar. Conoce más en AcupunturaChile.",
       "ilu": "cierre"
     }
-  ]
+  ],
+  "voz_velocidad": 0.95
 }

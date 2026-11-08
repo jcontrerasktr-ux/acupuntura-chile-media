@@ -15,7 +15,7 @@ Spec:
     {"voz": "...", "ilu": "cierre"}
   ]
 }
-Ilustraciones: pergamino (texto antiguo que se escribe) y yinyang (con las cuatro estaciones) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
+Ilustraciones: pergamino (texto antiguo que se escribe) y yinyang (con los cinco elementos) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
 Todos los dibujos son originales y usan la paleta de la marca. Nunca copiar ilustraciones de otras cuentas.
 """
 import json
@@ -535,10 +535,10 @@ def ilu_yinyang(t, lt, sc):
     im.alpha_composite(giro, (int((cx - 190) * SS), int((cy - 190) * SS)))
     dyn = new_canvas()
     dd = ImageDraw.Draw(dyn)
-    estaciones = [(122, 196, 120), (255, 208, 64), (234, 142, 62), (166, 214, 240)]
+    estaciones = [(110, 190, 120), (232, 96, 72), (240, 190, 70), (205, 212, 222), (92, 150, 214)]   # cinco elementos: madera, fuego, tierra, metal, agua
     d = ImageDraw.Draw(im)
     for i, col in enumerate(estaciones):
-        ang = lt * 0.55 + i * math.pi / 2 - math.pi / 4
+        ang = lt * 0.55 + i * 2 * math.pi / 5 - math.pi / 2
         x, y = cx + 290 * math.cos(ang), cy + 290 * math.sin(ang)
         r = 30 * SS
         d.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=tuple(int(v * 0.72) for v in col) + (255,))
@@ -760,6 +760,8 @@ def main():
             ill = ILU[sc["ilu"]](tt, lt, sc)
             if sc.get("guia"):
                 ill.alpha_composite(guia_layer(lt, sc["guia"]))
+            if sc.get("rotulo"):
+                label(ImageDraw.Draw(ill), sc["rotulo"], 480, 765)
             ill = ill.resize((int(CW * k), int(CH * k)), Image.LANCZOS)
             paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 50)
         d = ImageDraw.Draw(f)
