@@ -1,0 +1,14 @@
+{
+  "web": "acupuntura-chile.cl",
+  "laminas": [
+    {"tipo":"portada","tag":"DATO + GUÍA PARA GUARDAR","icono":"head","titulo":"*1.200 millones* de personas viven con migraña","sub":"Desliza"},
+    {"tipo":"dato","tag":"DATO","numero":"1.200","tam":150,"unidad":"millones","texto":"de personas tenían migraña en el mundo en 2021, según el estudio Carga Global de Enfermedad.","fuente":"GBD 2021, Cell Reports Medicine (2025)","guia":"quieta"},
+    {"tipo":"dato","tag":"DATO","numero":"2.800","tam":150,"unidad":"millones","texto":"de personas tenían algún tipo de dolor de cabeza en 2021. Es la segunda condición más frecuente del mundo.","fuente":"GBD 2021, Cell Reports Medicine (2025)","guia":"saluda"},
+    {"tipo":"dato","tag":"DATO","numero":"30 a 44","tam":150,"unidad":"años","texto":"es la edad de las mujeres con mayor carga por dolores de cabeza, según el mismo estudio.","fuente":"GBD 2021, Cell Reports Medicine (2025)","guia":"quieta"},
+    {"tipo":"paso","n":1,"icono":"curve","titulo":"Anota tus episodios","texto":"Registra día, hora y qué pasó antes. Ayuda a notar patrones y a contárselo a tu médico.","guia":"saluda"},
+    {"tipo":"paso","n":2,"icono":"moon","titulo":"Cuida tu rutina de sueño","texto":"Acostarte y levantarte a horas parecidas puede ayudar a tu bienestar.","guia":"quieta"},
+    {"tipo":"paso","n":3,"icono":"leaf","titulo":"Hidrátate y no saltes comidas","texto":"Toma agua durante el día y come a tus horas. Tu cuerpo lo agradece.","guia":"saluda"},
+    {"tipo":"paso","n":4,"icono":"wave","titulo":"Pausa de pantallas y estrés","texto":"Descansa la vista, respira lento y suelta el cuello. Puede ayudar a bajar la tensión.","guia":"quieta"},
+    {"tipo":"cierre","titulo":"Guárdalo y envíaselo a alguien que sufre de migraña","texto":"Si el dolor es intenso, nuevo o distinto, consulta a un profesional de salud. En AcupunturaChile evaluamos tu caso y armamos un plan a tu medida.","guia":"quieta"}
+  ]
+}
