@@ -1,0 +1,17 @@
+{
+  "tag": "SEDES · SERVICIOS",
+  "hook": "¿Sabías que atendemos en *5* ciudades de Chile?",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Sabías que AcupunturaChile atiende en cinco ciudades del país?", "ilu": "tarjeta", "icono": "leaf", "chip": "SEDES", "guia": "saluda"},
+    {"voz": "Puedes encontrarnos en Santiago y en Viña del Mar.", "ilu": "tarjeta", "icono": "wave", "chip": "Santiago · Viña del Mar", "guia": "quieta"},
+    {"voz": "También en La Serena, en Talca y en Curicó.", "ilu": "tarjeta", "icono": "curve", "chip": "La Serena · Talca · Curicó", "guia": "quieta"},
+    {"voz": "En cada sede trabaja un equipo de profesionales de la salud que te escucha con calma.", "ilu": "tarjeta", "icono": "body", "chip": "Equipo profesional", "guia": "saluda"},
+    {"voz": "Ofrecemos acupuntura, medicina china, kinesiología, masaje terapéutico, osteopatía y quiropraxia.", "ilu": "tarjeta", "icono": "head", "chip": "Un solo lugar", "guia": "quieta"},
+    {"voz": "Así puedes evaluar tu caso y armar un plan a tu medida, como apoyo a tu bienestar.", "ilu": "tarjeta", "icono": "moon", "chip": "Plan a tu medida", "guia": "saluda"},
+    {"voz": "Agenda tu hora en acupuntura-chile.cl y elige la sede que te quede más cerca.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
