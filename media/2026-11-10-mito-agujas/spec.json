@@ -1,0 +1,17 @@
+{
+  "tag": "MITO O VERDAD",
+  "hook": "¿Mito o verdad? *Las agujas* duelen mucho",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "Mito o verdad. Hoy hablamos de las agujas de la acupuntura.", "ilu": "tarjeta", "icono": "leaf", "chip": "MITO O VERDAD", "guia": "saluda"},
+    {"voz": "Mito: la acupuntura duele mucho, porque usa agujas.", "ilu": "tarjeta", "icono": "body", "chip": "MITO", "guia": "quieta"},
+    {"voz": "Verdad: las agujas son muy finas, mucho más que las de una inyección.", "ilu": "tarjeta", "icono": "wave", "chip": "VERDAD", "guia": "saluda"},
+    {"voz": "Muchas personas sienten solo un leve hormigueo o pesadez, y otras casi no sienten nada.", "ilu": "tarjeta", "icono": "curve", "chip": "VERDAD", "guia": "quieta"},
+    {"voz": "Las agujas son estériles y de un solo uso, y las aplica un profesional de la salud.", "ilu": "tarjeta", "icono": "head", "chip": "VERDAD", "guia": "saluda"},
+    {"voz": "Cada persona responde distinto. Si algo te incomoda, avísale a tu terapeuta durante la sesión.", "ilu": "tarjeta", "icono": "moon", "chip": "Cada persona es distinta", "guia": "quieta"},
+    {"voz": "Si tienes dudas, escríbenos y evaluamos tu caso en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
