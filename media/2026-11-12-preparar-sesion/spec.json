@@ -1,0 +1,17 @@
+{
+  "tag": "TIP DEL JUEVES",
+  "hook": "3 pasos para *prepararte* para tu sesión",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Tienes sesión pronto? Te cuento tres pasos simples para prepararte.", "ilu": "tarjeta", "icono": "leaf", "chip": "Tip del jueves", "guia": "saluda"},
+    {"voz": "Paso uno: come algo liviano antes de ir. Ni con el estómago vacío, ni muy lleno.", "ilu": "tarjeta", "icono": "body", "chip": "Paso 1 · Come liviano", "guia": "quieta"},
+    {"voz": "Así llegas con energía y más cómoda o cómodo durante la sesión.", "ilu": "tarjeta", "icono": "wave", "chip": "Paso 1 · Come liviano", "guia": "saluda"},
+    {"voz": "Paso dos: usa ropa suave y holgada, que se pueda subir fácil en brazos y piernas.", "ilu": "tarjeta", "icono": "curve", "chip": "Paso 2 · Ropa cómoda", "guia": "quieta"},
+    {"voz": "Paso tres: llega con unos diez minutos de tiempo, para respirar y bajar el ritmo.", "ilu": "tarjeta", "icono": "moon", "chip": "Paso 3 · Llega con tiempo", "guia": "saluda"},
+    {"voz": "Y cuéntale a tu terapeuta cómo te sientes. Si tu molestia es intensa o nueva, consulta a un profesional de salud.", "ilu": "tarjeta", "icono": "head", "chip": "Cuéntale cómo te sientes", "guia": "quieta"},
+    {"voz": "Cada persona responde distinto. Agenda tu hora en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
