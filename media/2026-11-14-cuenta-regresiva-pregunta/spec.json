@@ -1,0 +1,17 @@
+{
+  "tag": "PREGUNTA DEL SÁBADO",
+  "hook": "Faltan *2 días* para el Día de la Acupuntura",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "Faltan dos días para el Día Mundial de la Acupuntura, el lunes dieciséis de noviembre.", "ilu": "tarjeta", "icono": "leaf", "chip": "Faltan 2 días", "guia": "saluda"},
+    {"voz": "Es una fecha para conocer mejor esta tradición de la medicina china, con siglos de historia.", "ilu": "tarjeta", "icono": "wave", "chip": "Medicina china", "guia": "quieta"},
+    {"voz": "Hoy muchas personas la consideran un apoyo complementario para su bienestar y su descanso.", "ilu": "tarjeta", "icono": "moon", "chip": "Bienestar", "guia": "saluda"},
+    {"voz": "Y como cada persona vive esto distinto, hoy tenemos una pregunta para ti.", "ilu": "tarjeta", "icono": "body", "chip": "Pregunta de la semana", "guia": "quieta"},
+    {"voz": "¿Qué molestia o duda te gustaría que explicáramos primero: dolor de cuello, estrés o sueño?", "ilu": "tarjeta", "icono": "head", "chip": "¿Cuello, estrés o sueño?", "guia": "saluda"},
+    {"voz": "Respóndenos por mensaje directo y armamos contenido pensando en ti. Si tu molestia es intensa o nueva, consulta a un profesional de salud.", "ilu": "tarjeta", "icono": "curve", "chip": "Responde por mensaje directo", "guia": "quieta"},
+    {"voz": "Te leemos por mensaje directo. Conoce más en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
