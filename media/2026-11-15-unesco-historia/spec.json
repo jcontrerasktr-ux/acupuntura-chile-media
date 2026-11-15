@@ -1,0 +1,17 @@
+{
+  "tag": "MEDICINA CHINA · HISTORIA",
+  "hook": "¿Sabías que la UNESCO reconoció la *acupuntura*?",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Sabías que la UNESCO incluyó la acupuntura en una lista de patrimonio cultural?", "ilu": "pergamino", "etiqueta": "Historia", "guia": "saluda"},
+    {"voz": "Fue en el año dos mil diez, en la Lista Representativa del Patrimonio Cultural Inmaterial de la Humanidad.", "ilu": "pergamino", "etiqueta": "Historia", "rotulo": "UNESCO · 2010", "guia": "quieta"},
+    {"voz": "El elemento reconocido se llama Acupuntura y moxibustión de la medicina tradicional china, presentado por China.", "ilu": "pergamino", "etiqueta": "Historia", "rotulo": "Patrimonio cultural inmaterial", "guia": "quieta"},
+    {"voz": "Según la UNESCO, sus teorías sostienen que el cuerpo es como un pequeño universo conectado por canales.", "ilu": "meridianos", "etiqueta": "Medicina china", "guia": "saluda"},
+    {"voz": "Es una mirada de la tradición, que se ha transmitido durante siglos.", "ilu": "yinyang", "etiqueta": "Medicina china", "guia": "quieta"},
+    {"voz": "Mañana lunes es el Día Mundial de la Acupuntura. Una buena fecha para conocer más esta tradición.", "ilu": "tarjeta", "icono": "leaf", "chip": "Lunes 16 de noviembre", "guia": "saluda"},
+    {"voz": "Hoy se usa como apoyo complementario para el bienestar. Conoce más en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
