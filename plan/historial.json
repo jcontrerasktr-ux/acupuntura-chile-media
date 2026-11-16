@@ -81,6 +81,13 @@
       "subtipo": "servicios-fecha-especial",
       "id_tema": "dia-mundial-acupuntura-servicios",
       "resultado": "publicado media_id 18169790209487491 (video 45,1 s, URL GitHub Pages)"
+    },
+    {
+      "fecha": "2026-11-16",
+      "tipo": "carrusel",
+      "subtipo": "dato-guia",
+      "id_tema": "migrana-habitos",
+      "resultado": "publicado media_id 18082877027388491 (5 láminas, URLs raw)"
     }
   ]
 }
