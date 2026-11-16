@@ -1,0 +1,17 @@
+{
+  "tag": "DÍA MUNDIAL DE LA ACUPUNTURA",
+  "hook": "Hoy es el *Día Mundial* de la Acupuntura",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "Hoy, dieciséis de noviembre, se celebra el Día Mundial de la Acupuntura.", "ilu": "tarjeta", "icono": "leaf", "chip": "16 de noviembre", "guia": "saluda"},
+    {"voz": "Es una tradición de la medicina china con siglos de historia, que hoy se conoce en todo el mundo.", "ilu": "tarjeta", "icono": "wave", "chip": "Medicina china", "guia": "quieta"},
+    {"voz": "En AcupunturaChile la ofrecemos como apoyo complementario, junto a kinesiología, masaje terapéutico, osteopatía y quiropraxia.", "ilu": "tarjeta", "icono": "body", "chip": "Un solo lugar", "guia": "saluda"},
+    {"voz": "Cada persona responde distinto, por eso evaluamos tu caso y armamos un plan a tu medida.", "ilu": "tarjeta", "icono": "curve", "chip": "Plan a tu medida", "guia": "quieta"},
+    {"voz": "Atendemos en Santiago, Viña del Mar, La Serena, Talca y Curicó.", "ilu": "tarjeta", "icono": "head", "chip": "5 sedes en Chile", "guia": "saluda"},
+    {"voz": "También tenemos programas de bienestar para empresas, con pausas y jornadas para equipos de trabajo.", "ilu": "tarjeta", "icono": "moon", "chip": "Bienestar para empresas", "guia": "quieta"},
+    {"voz": "Agenda tu hora en acupuntura-chile.cl. Feliz Día de la Acupuntura.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
