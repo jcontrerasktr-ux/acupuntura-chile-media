@@ -38,25 +38,36 @@ def _blob(size, color, alpha):
     return a[..., None] * np.array(color, dtype=np.float32)
 
 
+_BGIMG = None
+_MOTAS = None
+
+
 def bg_frame(t=0.0):
-    """Fondo degradado verde-azulado con manchas de luz que se mueven despacio."""
-    global _BG, _BLOBS
-    if _BG is None:
+    """Fondo oscuro con foco de luz azul detrás del contenido, brillo cálido abajo y motas de luz que suben."""
+    global _BGIMG, _MOTAS
+    if _BGIMG is None:
         yy = np.linspace(0, 1, H, dtype=np.float32)[:, None, None]
-        _BG = np.array(TEAL_D, np.float32) * (1 - yy) + np.array(TEAL_M, np.float32) * yy
-        _BG = np.repeat(_BG, W, axis=1)
-        _BLOBS = [_blob(900, (70, 125, 170), 0.55), _blob(760, (95, 150, 195), 0.32), _blob(820, (50, 100, 150), 0.5)]
-    a = _BG.copy()
-    cfg = [(0.15, 0.20, 0.35, 0.0), (0.85, 0.55, 0.30, 2.1), (0.30, 0.90, 0.28, 4.2)]
-    for blob, (cx, cy, sp, ph) in zip(_BLOBS, cfg):
-        s = blob.shape[0]
-        x = int(cx * W - s / 2 + 90 * math.sin(t * sp + ph))
-        y = int(cy * H - s / 2 + 110 * math.cos(t * sp * 0.8 + ph))
-        x0, y0 = max(0, x), max(0, y)
-        x1, y1 = min(W, x + s), min(H, y + s)
-        if x1 > x0 and y1 > y0:
-            a[y0:y1, x0:x1] += blob[y0 - y:y1 - y, x0 - x:x1 - x]
-    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).convert("RGBA")
+        base = np.array((4, 7, 13), np.float32) * (1 - yy) + np.array((12, 22, 34), np.float32) * yy
+        base = np.repeat(base, W, axis=1)
+        yg, xg = np.mgrid[0:H, 0:W].astype(np.float32)
+        r = np.sqrt(((xg - W * 0.5) / (W * 0.80)) ** 2 + ((yg - H * 0.60) / (H * 0.36)) ** 2)
+        base += (np.clip(1 - r, 0, 1) ** 2)[..., None] * np.array((57, 105, 145), np.float32) * 0.85
+        r2 = np.sqrt(((xg - W * 0.5) / (W * 0.95)) ** 2 + ((yg - H * 0.82) / (H * 0.17)) ** 2)
+        base += (np.clip(1 - r2, 0, 1) ** 2)[..., None] * np.array((120, 74, 26), np.float32) * 0.38
+        vig = 1 - 0.38 * (((xg - W / 2) / (W / 2)) ** 2 * 0.7 + ((yg - H / 2) / (H / 2)) ** 2 * 0.5)
+        base *= np.clip(vig, 0.5, 1)[..., None]
+        _BGIMG = Image.fromarray(np.clip(base, 0, 255).astype(np.uint8)).convert("RGBA")
+        rng = np.random.RandomState(7)
+        _MOTAS = [(rng.uniform(0, W), rng.uniform(0, H), rng.uniform(1.5, 4.2), rng.uniform(0, 6.28), rng.uniform(0.3, 1.0)) for _ in range(70)]
+    img = _BGIMG.copy()
+    ov = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    d = ImageDraw.Draw(ov)
+    for x, y, s, ph, sp in _MOTAS:
+        yy_ = (y - t * 26 * sp) % H
+        a = int(60 + 120 * (0.5 + 0.5 * math.sin(t * 1.6 + ph)))
+        d.ellipse((x - s, yy_ - s, x + s, yy_ + s), fill=(255, 236, 190, a))
+    img.alpha_composite(ov)
+    return img
 
 
 # ---------------- texto ----------------
@@ -139,6 +150,34 @@ def pill_layer(text, size=46, fill=(74, 124, 160), fg=WHITE, pad=(44, 20), bold=
     d = ImageDraw.Draw(im)
     d.rounded_rectangle((20, 20, 20 + w, 20 + h), h // 2, fill=fill + (245,))
     d.text((20 + pad[0], 20 + pad[1] - 2), text, font=fnt, fill=fg + (255,))
+    return im
+
+
+def chip_layer(text, kind="info", size=46, pad=(34, 16)):
+    """Etiqueta de vidrio oscuro con insignia redonda: kind = ok (✓ verde), no (✗ rojo) o info (amarillo)."""
+    col = {"ok": (60, 190, 120), "no": (240, 96, 90), "info": YEL}[kind]
+    fnt = font(size, True)
+    d0 = ImageDraw.Draw(Image.new("RGB", (4, 4)))
+    tw = d0.textlength(text, font=fnt)
+    bd = int(size * 1.25)
+    w, h = int(bd + pad[0] * 2 + tw + 6), int(bd + pad[1])
+    im = Image.new("RGBA", (w + 60, h + 60), (0, 0, 0, 0))
+    glow = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    ImageDraw.Draw(glow).rounded_rectangle((30, 30, 30 + w, 30 + h), h // 2, fill=col + (110,))
+    im = Image.alpha_composite(im, glow.filter(ImageFilter.GaussianBlur(14)))
+    d = ImageDraw.Draw(im)
+    d.rounded_rectangle((30, 30, 30 + w, 30 + h), h // 2, fill=(14, 26, 38, 238), outline=col + (255,), width=3)
+    cx, cy, r = 30 + pad[0] // 2 + bd // 2 + 6, 30 + h // 2, bd // 2
+    d.ellipse((cx - r, cy - r, cx + r, cy + r), fill=col + (255,))
+    k = r * 0.5
+    if kind == "ok":
+        d.line([(cx - k, cy + 1), (cx - k * 0.25, cy + k * 0.75), (cx + k, cy - k * 0.7)], fill=WHITE + (255,), width=max(5, size // 7), joint="curve")
+    elif kind == "no":
+        d.line([(cx - k * 0.8, cy - k * 0.8), (cx + k * 0.8, cy + k * 0.8)], fill=WHITE + (255,), width=max(5, size // 7))
+        d.line([(cx + k * 0.8, cy - k * 0.8), (cx - k * 0.8, cy + k * 0.8)], fill=WHITE + (255,), width=max(5, size // 7))
+    else:
+        d.ellipse((cx - k * 0.45, cy - k * 0.45, cx + k * 0.45, cy + k * 0.45), fill=INK + (255,))
+    d.text((30 + pad[0] + bd + 6, cy - size * 0.72), text, font=fnt, fill=WHITE + (255,))
     return im
 
 

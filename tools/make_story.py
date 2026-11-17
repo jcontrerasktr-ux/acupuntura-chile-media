@@ -44,8 +44,8 @@ def layout(spec):
     kind = spec.get("type", "tip")
     items = [logo(250), tag]
     if kind == "mito":
-        items += [pill_layer("MITO", 50, fill=CORAL, pad=(50, 16)), fit_text(spec["mito"], 62, maxw=900),
-                  pill_layer("VERDAD", 50, fill=(60, 140, 110), pad=(50, 16)), fit_text(spec["verdad"], 50, bold=False, maxw=900, line_h=1.3)]
+        items += [chip_layer("MITO", "no", 50), fit_text(spec["mito"], 62, maxw=900),
+                  chip_layer("VERDAD", "ok", 50), fit_text(spec["verdad"], 50, bold=False, maxw=900, line_h=1.3)]
     elif kind == "pregunta":
         items += [scaled(icon("body"), 0.55), fit_text(spec["question"], 74, maxw=900, stroke=1),
                   text_layer(spec.get("hint", "Responde por mensaje directo"), 40, color=YEL, maxw=800)]
