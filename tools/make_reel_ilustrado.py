@@ -27,7 +27,7 @@ import subprocess
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0])
 from lib import *  # noqa
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 import numpy as np
 
 CW, CH, SS = 800, 820, 2          # lienzo de la ilustración (se dibuja al doble y se reduce)
@@ -302,6 +302,8 @@ def ilu_meridianos(t, lt, sc):
 
 # ---------------------------------------------------------------- puntos de acupuntura (zoom a una zona)
 # nombre -> (x, y, pista en español). Coordenadas del lienzo 800x820.
+HANZI = {"Yintang": "印堂", "Taiyang": "太陽", "Hegu": "合谷", "Zusanli": "足三里", "Shenmen": "神門"}
+CJK = "/usr/share/fonts/opentype/noto/NotoSansCJK-Bold.ttc"
 PUNTOS = {
     "cara": {"Yintang": (400, 322, "entre las cejas"), "Taiyang": (232, 345, "en la sien"), "Taiyang ": (568, 345, "en la sien")},
     "mano": {"Hegu": (306, 432, "entre el pulgar y el índice")},
@@ -418,7 +420,16 @@ def ilu_punto(t, lt, sc):
     od = ImageDraw.Draw(out)
     nombres = sorted({n.strip() for n in elegidos})
     pistas = {n.strip(): PUNTOS[zona][n][2] for n in elegidos}
-    label(od, nombres[0] if len(nombres) == 1 else " · ".join(nombres), 400, 772, size=36)
+    if len(nombres) == 1 and nombres[0] in HANZI and os.path.exists(CJK):
+        fl, fc = font(36 * SS), ImageFont.truetype(CJK, 36 * SS)
+        wl, wc = od.textlength(nombres[0], font=fl), od.textlength(HANZI[nombres[0]], font=fc)
+        tot, pad, gap = wl + wc, 28 * SS, 18 * SS
+        x0 = 400 * SS - (tot + gap) / 2
+        od.rounded_rectangle((x0 - pad, 738 * SS, x0 + tot + gap + pad, 806 * SS), 34 * SS, fill=YEL + (255,))
+        od.text((x0, 772 * SS), nombres[0], font=fl, fill=TEAL_D, anchor="lm")
+        od.text((x0 + wl + gap, 772 * SS), HANZI[nombres[0]], font=fc, fill=TEAL_D, anchor="lm")
+    else:
+        label(od, nombres[0] if len(nombres) == 1 else " · ".join(nombres), 400, 772, size=36)
     if len(nombres) == 1:
         f = font(26 * SS, False)
         tw = od.textlength(pistas[nombres[0]], font=f)
@@ -851,9 +862,13 @@ def con_aviso(out, sc):
         pl = pl.resize((int(pl.width * f), int(pl.height * f)), Image.LANCZOS)
         out.alpha_composite(pl, (int(CW * SS / 2 - pl.width / 2), int(772 * SS - pl.height / 2)))
     if sc.get("dato"):
-        tl = text_layer(sc["dato"], 58, maxw=760, line_h=1.1, stroke=1)
-        tl = tl.resize((int(tl.width * f), int(tl.height * f)), Image.LANCZOS)
-        out.alpha_composite(tl, (int(CW * SS / 2 - tl.width / 2), int(748 * SS - tl.height / 2)))
+        tl = text_layer(sc["dato"], 58, color=(255, 214, 90), hl_color=(255, 240, 170), maxw=700, line_h=1.1, stroke=0)
+        bw, bh = tl.width + 70, tl.height + 26
+        box = Image.new("RGBA", (bw, bh), (0, 0, 0, 0))
+        ImageDraw.Draw(box).rounded_rectangle((0, 0, bw - 1, bh - 1), 26, fill=(18, 16, 10, 235), outline=(214, 170, 60, 255), width=4)
+        box.alpha_composite(tl, (35, 6))
+        box = box.resize((int(box.width * f), int(box.height * f)), Image.LANCZOS)
+        out.alpha_composite(box, (int(CW * SS / 2 - box.width / 2), int(735 * SS - box.height / 2)))
     return out
 
 
@@ -896,6 +911,18 @@ def caption_layer(words, starts, lt, n=3):
 
 
 # ---------------------------------------------------------------- armado
+TINTES = {"verde": ((0.55, 1.05, 0.80), (0, 14, 6)), "calido": ((1.30, 0.80, 0.55), (22, 6, 0))}
+
+
+def teñir(f, nombre):
+    """Cambia el color del fondo de una escena (azul es el original)."""
+    if nombre not in TINTES:
+        return f
+    mul, add = TINTES[nombre]
+    a = np.asarray(f.convert("RGB"), dtype=np.float32) * np.array(mul, np.float32) + np.array(add, np.float32)
+    return Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).convert("RGBA")
+
+
 def rebote(u):
     """Easing con rebote (overshoot) típico de motion graphics."""
     u = max(0.0, min(1.0, u))
@@ -966,6 +993,7 @@ def main():
         f = bg_frame(tt)
         sc = next((e for e in escenas if e["start"] <= tt < e["end"]), escenas[-1])
         lt = tt - sc["start"]
+        f = teñir(f, sc.get("fondo"))
         a_in = ease(lt / 0.45)
         a_out = min(1.0, (sc["end"] - tt) / 0.3) if sc is not escenas[-1] else 1.0
         al = a_in * a_out
