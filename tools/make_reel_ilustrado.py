@@ -15,7 +15,7 @@ Spec:
     {"voz": "...", "ilu": "cierre"}
   ]
 }
-Ilustraciones: tarjeta (ícono de la marca "icono": leaf|moon|body|head|wave|curve y "chip": MITO|VERDAD|texto), pergamino (texto antiguo que se escribe) y yinyang (con los cinco elementos) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
+Ilustraciones de objetos con luz: taza (infusión con planta), moxa, ventosas, agujas; cualquier escena admite "callout": "TEXTO" con "callout_tipo": ok|no|info (etiqueta con insignia) o "dato": "Texto con *número* amarillo". Ilustraciones: tarjeta (ícono de la marca "icono": leaf|moon|body|head|wave|curve y "chip": MITO|VERDAD|texto), pergamino (texto antiguo que se escribe) y yinyang (con los cinco elementos) para datos históricos; punto (con "zona": cara|mano|pierna|oreja y opcional "puntos": ["Yintang"]), columna (vértebras 0-23: cervical 0-6, dorsal 7-18, lumbar 19-23), movimiento, meridianos, cierre (logo + web).
 Todos los dibujos son originales y usan la paleta de la marca. Nunca copiar ilustraciones de otras cuentas.
 """
 import json
@@ -668,8 +668,8 @@ def ilu_tarjeta(t, lt, sc):
     im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(14 * SS)))
     im.alpha_composite(ic, (cx - ic.width // 2, int(420 * SS - ic.height / 2 + 6 * SS * math.sin(lt * 1.8))))
     if sc.get("chip"):
-        col = {"MITO": CORAL, "VERDAD": (60, 140, 110)}.get(sc["chip"], TEAL_M)
-        pl = pill_layer(sc["chip"], 50, fill=col, pad=(50, 16))
+        kind = {"MITO": "no", "VERDAD": "ok"}.get(sc["chip"], "info")
+        pl = chip_layer(sc["chip"], kind, 50)
         pl = pl.resize((int(pl.width * f), int(pl.height * f)), Image.LANCZOS)
         im.alpha_composite(pl, (cx - pl.width // 2, int(100 * SS)))
     if sc.get("etiqueta"):
@@ -677,7 +677,187 @@ def ilu_tarjeta(t, lt, sc):
     return im
 
 
-ILU = {"punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos,
+# ---------------------------------------------------------------- objetos con luz (estilo oscuro)
+def _hoja(d, base, ang, largo, w, col):
+    tip = (base[0] + largo * math.cos(ang), base[1] - largo * math.sin(ang))
+    mid = (base[0] + largo * 0.5 * math.cos(ang), base[1] - largo * 0.5 * math.sin(ang))
+    nx, ny = -math.sin(ang), -math.cos(ang)
+    d.polygon([sp(base), sp((mid[0] + nx * w, mid[1] + ny * w)), sp(tip), sp((mid[0] - nx * w, mid[1] - ny * w))], fill=col)
+
+
+def base_taza():
+    m = mask_new()
+    dm = ImageDraw.Draw(m)
+    dm.pieslice((sp((160, 250)), sp((640, 700))), 0, 180, fill=255)
+    dm.ellipse((sp((160, 430)), sp((640, 520))), fill=255)
+    dm.ellipse((sp((310, 668)), sp((490, 716))), fill=255)
+    base = shaded(m, light=(130, 208, 196), dark=(28, 84, 92), r=34)
+    d = ImageDraw.Draw(base)
+    d.ellipse((sp((160, 430)), sp((640, 520))), outline=(190, 240, 232, 255), width=4 * SS)
+    d.ellipse((sp((184, 442)), sp((616, 508))), fill=(86, 168, 188, 255))
+    soft(base, lambda x: x.ellipse((sp((250, 452)), sp((420, 492))), fill=(190, 236, 244, 150)), 10)
+    return base
+
+
+def ilu_taza(t, lt, sc):
+    if "taza" not in _BASES:
+        _BASES["taza"] = base_taza()
+    im = _BASES["taza"].copy()
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(dyn)
+    d = ImageDraw.Draw(im)
+    sway = 0.06 * math.sin(lt * 1.4)
+    d.line([sp((400, 474)), sp((400 + 22 * math.sin(lt * 1.4), 250))], fill=(150, 200, 100, 255), width=6 * SS)
+    for i in range(8):
+        y = 462 - i * 27
+        x = 400 + 22 * math.sin(lt * 1.4) * (474 - y) / 224
+        L = 92 - i * 7
+        for s in (1, -1):
+            ang = math.pi / 2 - s * (0.95 - i * 0.04) + sway
+            _hoja(dd, (x, y), ang, L, 13, (200, 240, 120, 255))
+    for k in range(3):
+        ph = (lt * 0.5 + k / 3) % 1.0
+        rx, ry = (40 + 190 * ph), (8 + 36 * ph)
+        dd.ellipse((sp((400 - rx, 476 - ry)), sp((400 + rx, 476 + ry))), outline=(220, 250, 255, int(200 * (1 - ph))), width=3 * SS)
+    out = Image.alpha_composite(im, halo(dyn, r=20, k=0.9))
+    ov = new_canvas()
+    od = ImageDraw.Draw(ov)
+    for k in range(3):
+        for j in range(26):
+            u = j / 26
+            ph = (lt * 0.35 + k * 0.33 + u * 0.0) % 1.0
+            y = 430 - 300 * (u * 0.9 + 0.1 * ph)
+            x = 330 + k * 70 + 18 * math.sin(u * 7 + lt * 1.6 + k * 2)
+            r = (10 + 22 * u) * SS
+            od.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=(236, 244, 250, int(46 * (1 - u))))
+    out = Image.alpha_composite(out, ov.filter(ImageFilter.GaussianBlur(5 * SS)))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+def ilu_moxa(t, lt, sc):
+    if "moxa" not in _BASES:
+        m = mask_new()
+        dm = ImageDraw.Draw(m)
+        mline(dm, [(220, 650), (520, 340)], 74)
+        dm.ellipse((sp((170, 660)), sp((440, 730))), fill=255)
+        b = shaded(m, light=(246, 232, 200), dark=(150, 118, 84), r=14)
+        d0 = ImageDraw.Draw(b)
+        for k in range(7):
+            u = 0.15 + k * 0.11
+            x, y = 220 + 300 * u, 650 - 310 * u
+            d0.line([sp((x - 22, y - 22)), sp((x + 22, y + 22))], fill=(170, 138, 100, 140), width=3 * SS)
+        _BASES["moxa"] = b
+    im = _BASES["moxa"].copy()
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(dyn)
+    pulse = 0.85 + 0.15 * math.sin(lt * 5)
+    for r, col in ((56, (255, 110, 30, 150)), (38, (255, 160, 50, 220)), (22, (255, 226, 130, 255))):
+        r *= pulse * SS
+        dd.ellipse((540 * SS - r, 322 * SS - r, 540 * SS + r, 322 * SS + r), fill=col)
+    for k in range(6):
+        ph = (lt * 0.9 + k / 6) % 1.0
+        x = 540 + 70 * ph + 20 * math.sin(lt * 6 + k * 3)
+        y = 322 - 160 * ph
+        dd.ellipse((x * SS - 4 * SS, y * SS - 4 * SS, x * SS + 4 * SS, y * SS + 4 * SS), fill=(255, 190, 80, int(255 * (1 - ph))))
+    out = Image.alpha_composite(im, halo(dyn, r=26, k=1.0))
+    ov = new_canvas()
+    od = ImageDraw.Draw(ov)
+    for k in range(2):
+        for j in range(30):
+            u = j / 30
+            y = 300 - 280 * u
+            x = 548 + 38 * math.sin(u * 6 + lt * 1.3 + k * 3) + u * 70
+            r = (8 + 26 * u) * SS
+            od.ellipse((x * SS - r, y * SS - r, x * SS + r, y * SS + r), fill=(215, 218, 226, int(70 * (1 - u))))
+    out = Image.alpha_composite(out, ov.filter(ImageFilter.GaussianBlur(6 * SS)))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+def ilu_ventosas(t, lt, sc):
+    if "ventosas" not in _BASES:
+        m = mask_new()
+        dm = ImageDraw.Draw(m)
+        poly = [(170, 190), (630, 190), (585, 430), (530, 740), (270, 740), (215, 430)]
+        dm.polygon([sp(q) for q in smooth(poly, 3)], fill=255)
+        b = shaded(m, r=40)
+        d0 = ImageDraw.Draw(b)
+        d0.line([sp((400, 170)), sp((400, 735))], fill=(160, 106, 84, 150), width=5 * SS)
+        for y in range(200, 730, 38):
+            d0.ellipse((sp((394, y)), sp((406, y + 12))), fill=(150, 98, 78, 190))
+        _BASES["ventosas"] = b
+    im = _BASES["ventosas"].copy()
+    d = ImageDraw.Draw(im)
+    for (cx, cy) in ((330, 440), (470, 440), (330, 580), (470, 580)):
+        r = 64 + 1.5 * math.sin(lt * 1.5 + cx)
+        d.ellipse((sp((cx - r + 10, cy - r + 14)), sp((cx + r + 10, cy + r + 14))), fill=(60, 24, 20, 70))
+        d.ellipse((sp((cx - r, cy - r)), sp((cx + r, cy + r))), fill=(196, 96, 88, 255))
+        d.ellipse((sp((cx - r * 0.72, cy - r * 0.72)), sp((cx + r * 0.72, cy + r * 0.72))), fill=(150, 56, 60, 255))
+        d.ellipse((sp((cx - r, cy - r)), sp((cx + r, cy + r))), fill=(200, 230, 245, 70), outline=(232, 246, 255, 235), width=5 * SS)
+        d.arc((sp((cx - r * 0.82, cy - r * 0.82)), sp((cx + r * 0.82, cy + r * 0.82))), 200, 260, fill=(255, 255, 255, 230), width=6 * SS)
+    glow = new_canvas()
+    dd = ImageDraw.Draw(glow)
+    ph = (lt * 0.6) % 1.0
+    for (cx, cy) in ((330, 440), (470, 440), (330, 580), (470, 580)):
+        r = (70 + 40 * ph) * SS
+        dd.ellipse((cx * SS - r, cy * SS - r, cx * SS + r, cy * SS + r), outline=YEL + (int(200 * (1 - ph)),), width=4 * SS)
+    out = Image.alpha_composite(im, halo(glow, r=16, k=0.8))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+def ilu_agujas(t, lt, sc):
+    if "agujas" not in _BASES:
+        m = mask_new()
+        dm = ImageDraw.Draw(m)
+        dm.rounded_rectangle((sp((70, 470)), sp((730, 740))), 60 * SS, fill=255)
+        b = shaded(m, r=30)
+        d0 = ImageDraw.Draw(b)
+        _BASES["agujas"] = b
+    im = _BASES["agujas"].copy()
+    d = ImageDraw.Draw(im)
+    dyn = new_canvas()
+    dd = ImageDraw.Draw(dyn)
+    for i, x in enumerate((190, 290, 400, 510, 610)):
+        u = min(1.0, max(0.0, (lt - 0.15 * i) / 0.5))
+        top = (x + 72, 170 + 20 * (1 - u) - 40 * (1 - u))
+        ins = (x, 480)
+        tip = (x - 18 * u, 480 + 70 * u)
+        d.line([sp(ins), sp(tip)], fill=(205, 214, 224, 150), width=3 * SS)
+        d.line([sp(top), sp(ins)], fill=(228, 235, 242, 255), width=5 * SS)
+        d.line([sp(top), sp((top[0] + 12, top[1] - 16))], fill=(240, 196, 80, 255), width=10 * SS)
+        d.line([sp((top[0] + 10, top[1] - 30)), sp((top[0] + 16, top[1] - 8))], fill=(250, 214, 110, 255), width=8 * SS)
+        ph = (lt * 0.8 + i * 0.2) % 1.0
+        r = (14 + 46 * ph) * SS
+        dd.ellipse((ins[0] * SS - r, ins[1] * SS - r, ins[0] * SS + r, ins[1] * SS + r), outline=YEL + (int(230 * (1 - ph)),), width=4 * SS)
+        r0 = 9 * SS
+        dd.ellipse((ins[0] * SS - r0, ins[1] * SS - r0, ins[0] * SS + r0, ins[1] * SS + r0), fill=YEL + (255,))
+    out = Image.alpha_composite(im, halo(dyn, r=18, k=1.0))
+    if sc.get("etiqueta"):
+        label(ImageDraw.Draw(out), sc["etiqueta"], 190, 40)
+    return out
+
+
+def con_aviso(out, sc):
+    """Etiqueta grande con insignia (callout) y/o dato destacado bajo la ilustración, como en las referencias."""
+    f = SS / 1.15
+    if sc.get("callout"):
+        kind = sc.get("callout_tipo", "ok")
+        pl = chip_layer(sc["callout"], kind, 44)
+        pl = pl.resize((int(pl.width * f), int(pl.height * f)), Image.LANCZOS)
+        out.alpha_composite(pl, (int(CW * SS / 2 - pl.width / 2), int(772 * SS - pl.height / 2)))
+    if sc.get("dato"):
+        tl = text_layer(sc["dato"], 58, maxw=760, line_h=1.1, stroke=1)
+        tl = tl.resize((int(tl.width * f), int(tl.height * f)), Image.LANCZOS)
+        out.alpha_composite(tl, (int(CW * SS / 2 - tl.width / 2), int(748 * SS - tl.height / 2)))
+    return out
+
+
+ILU = {"taza": ilu_taza, "moxa": ilu_moxa, "ventosas": ilu_ventosas, "agujas": ilu_agujas, "punto": ilu_punto, "columna": ilu_columna, "movimiento": ilu_movimiento, "meridianos": ilu_meridianos,
        "pergamino": ilu_pergamino, "yinyang": ilu_yinyang, "tarjeta": ilu_tarjeta}
 
 
@@ -784,6 +964,7 @@ def main():
                 ill.alpha_composite(guia_layer(lt, sc["guia"]))
             if sc.get("rotulo"):
                 label(ImageDraw.Draw(ill), sc["rotulo"], 480, 765)
+            ill = con_aviso(ill, sc)
             ill = ill.resize((int(CW * k), int(CH * k)), Image.LANCZOS)
             paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 50)
         d = ImageDraw.Draw(f)
