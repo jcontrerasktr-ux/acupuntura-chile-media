@@ -20,6 +20,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 ## Gráfica nueva (desde el 17 nov 2026, pedido de Julio con su video de referencia)
 - Todo (Reels, historias y carruseles) usa el fondo oscuro con luz (`bg_frame` en `tools/lib.py`): negro azulado, foco de luz azul detrás del contenido, brillo cálido abajo y motas de luz. Mantiene el logo, el azul de marca, el blanco, el amarillo de acento y Poppins. No volver al fondo azul liso anterior.
 - Lenguaje visual: objetos ilustrados grandes y con luz (`taza`, `moxa`, `ventosas`, `agujas`, además de `pergamino`, `yinyang`, `meridianos`, etc.), título arriba con la palabra clave en amarillo, etiquetas de vidrio con insignia ✓ o ✗ (`"callout"` y `"callout_tipo"`; MITO lleva ✗ y VERDAD ✓), y datos destacados en amarillo (`"dato"`). Un objeto o idea por escena.
+- Es estilo MOTION GRAPHICS (lo pidió Julio): objetos que entran con rebote, zoom lento de cámara, barrido de luz al cambiar de escena, subtítulo que resalta cada palabra, insignias y datos que aparecen con animación. Los videos nuevos deben sentirse dinámicos, no estáticos.
 - Los dibujos son siempre propios; la referencia de Julio (cuenta de medicina china) es solo inspiración de formato. Prohibido copiar sus dibujos, personajes, textos, cifras o videos.
 - Los Reels de la semana del 17 nov que ya estaban generados (11 y 18 de nov) se publican tal cual están; los siguientes salen con la gráfica nueva.
 

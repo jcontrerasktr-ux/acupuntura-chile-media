@@ -896,6 +896,25 @@ def caption_layer(words, starts, lt, n=3):
 
 
 # ---------------------------------------------------------------- armado
+def rebote(u):
+    """Easing con rebote (overshoot) típico de motion graphics."""
+    u = max(0.0, min(1.0, u))
+    c = 1.70158
+    return 1 + (c + 1) * (u - 1) ** 3 + c * (u - 1) ** 2
+
+
+def _barrido():
+    h = 160
+    a = np.zeros((h, W, 4), np.uint8)
+    prof = np.clip(1 - np.abs(np.linspace(-1, 1, h)), 0, 1) ** 2
+    a[..., 0], a[..., 1], a[..., 2] = 170, 215, 255
+    a[..., 3] = (prof[:, None] * 70).astype(np.uint8)
+    return Image.fromarray(a, "RGBA")
+
+
+BARRIDO = _barrido()
+
+
 def ease(u):
     u = max(0.0, min(1.0, u))
     return 1 - (1 - u) ** 3
@@ -965,8 +984,12 @@ def main():
             if sc.get("rotulo"):
                 label(ImageDraw.Draw(ill), sc["rotulo"], 480, 765)
             ill = con_aviso(ill, sc)
-            ill = ill.resize((int(CW * k), int(CH * k)), Image.LANCZOS)
-            paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 50)
+            # motion graphics: entrada con rebote, zoom lento de cámara y barrido de luz al cambiar de escena
+            s = (0.80 + 0.20 * rebote(lt / 0.6)) * (1 + 0.045 * lt / max(1.0, sc["end"] - sc["start"]))
+            ill = ill.resize((int(CW * k * s), int(CH * k * s)), Image.LANCZOS)
+            paste_center(f, ill, cy, al, dy=(1 - ease(lt / 0.5)) * 70)
+            if lt < 0.4:
+                f.alpha_composite(BARRIDO, (0, int(-160 + (H + 160) * ease(lt / 0.4))))
         d = ImageDraw.Draw(f)
         d.rounded_rectangle((90, 1620, 90 + int((W - 180) * tt / total), 1630), 5, fill=YEL + (230,))
         ff.stdin.write(f.convert("RGB").tobytes())
