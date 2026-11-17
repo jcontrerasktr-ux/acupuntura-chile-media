@@ -23,26 +23,32 @@
           19,
           23
         ]
-      ]
+      ],
+      "fondo": "azul"
     },
     {
       "voz": "La quiropraxia se enfoca en la columna y las articulaciones.",
       "ilu": "columna",
-      "etiqueta": "Quiropraxia"
+      "etiqueta": "Quiropraxia",
+      "fondo": "azul"
     },
     {
       "voz": "La kinesiología trabaja el movimiento, la fuerza y la postura.",
       "ilu": "movimiento",
-      "etiqueta": "Kinesiología"
+      "etiqueta": "Kinesiología",
+      "fondo": "verde"
     },
     {
       "voz": "La medicina china mira el cuerpo completo. Habla del qi, que circula por canales llamados meridianos.",
       "ilu": "meridianos",
-      "etiqueta": "Medicina china"
+      "etiqueta": "Medicina china",
+      "fondo": "calido"
     },
     {
       "voz": "Cada disciplina aporta algo distinto, y juntas pueden ser un apoyo complementario. Evaluamos tu caso y armamos un plan a tu medida. Agenda tu hora en AcupunturaChile.",
-      "ilu": "cierre"
+      "ilu": "cierre",
+      "fondo": "azul"
     }
-  ]
+  ],
+  "cierre_texto": "Guarda y comparte este Reel"
 }
