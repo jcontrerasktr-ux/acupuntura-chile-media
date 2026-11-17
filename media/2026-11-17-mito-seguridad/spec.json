@@ -1,0 +1,57 @@
+{
+ "tag": "MITO O VERDAD",
+ "hook": "¿Mito o verdad? *La acupuntura* no es segura",
+ "web": "acupuntura-chile.cl",
+ "voz_id": 28,
+ "cierre_texto": "Guarda y comparte esta historia",
+ "escenas": [
+  {
+   "voz": "Mito o verdad. Hoy hablamos de la seguridad en la acupuntura.",
+   "ilu": "agujas",
+   "callout": "MITO O VERDAD",
+   "callout_tipo": "info",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Mito: la acupuntura no es segura, porque usa agujas en el cuerpo.",
+   "ilu": "agujas",
+   "callout": "MITO",
+   "callout_tipo": "no",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Verdad: las agujas son estériles y de un solo uso, y se desechan después de cada sesión.",
+   "ilu": "agujas",
+   "dato": "*1 aguja* · 1 solo uso",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Verdad: la aplica un profesional de la salud con formación, en un espacio limpio y preparado.",
+   "ilu": "tarjeta",
+   "icono": "head",
+   "chip": "VERDAD",
+   "callout": "Profesional formado",
+   "callout_tipo": "ok",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Antes de empezar, conversamos sobre tu historial y tus molestias, para cuidar cada detalle.",
+   "ilu": "tarjeta",
+   "icono": "body",
+   "chip": "Primero conversamos",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Si tomas medicamentos, estás embarazada o tienes una condición de salud, cuéntaselo siempre a tu terapeuta.",
+   "ilu": "tarjeta",
+   "icono": "leaf",
+   "chip": "Cuéntanos tu historial",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Cada persona responde distinto, y es un apoyo complementario. Escríbenos y evaluamos tu caso.",
+   "ilu": "cierre"
+  }
+ ],
+ "voz_velocidad": 1.0
+}
