@@ -88,6 +88,13 @@
       "subtipo": "dato-guia",
       "id_tema": "migrana-habitos",
       "resultado": "publicado media_id 18082877027388491 (5 láminas, URLs raw)"
+    },
+    {
+      "fecha": "2026-11-17",
+      "tipo": "historia",
+      "subtipo": "mito-verdad",
+      "id_tema": "seguridad-agujas",
+      "resultado": "publicado media_id 18040669697888839 (video 43,7 s, URL GitHub Pages)"
     }
   ]
 }
