@@ -1,0 +1,17 @@
+{
+  "tag": "TIP DEL JUEVES",
+  "hook": "3 pausas para tu *espalda* si trabajas sentado",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Pasas muchas horas sentado? Te cuento tres pausas simples para tu espalda y tu cuello.", "ilu": "columna", "etiqueta": "Tip del jueves", "guia": "saluda"},
+    {"voz": "Pausa uno: cada hora, ponte de pie y camina un minuto. Cambiar de posición alivia la rutina.", "ilu": "movimiento", "etiqueta": "Pausa 1 · Camina", "guia": "quieta"},
+    {"voz": "Pausa dos: lleva los hombros hacia atrás y abajo, y respira lento tres veces.", "ilu": "movimiento", "etiqueta": "Pausa 2 · Hombros", "guia": "saluda"},
+    {"voz": "Pausa tres: gira el cuello suavemente a cada lado, sin forzar y sin dolor.", "ilu": "columna", "etiqueta": "Pausa 3 · Cuello", "guia": "quieta"},
+    {"voz": "Ajusta también tu puesto: pantalla a la altura de los ojos y pies apoyados en el suelo.", "ilu": "tarjeta", "icono": "body", "chip": "Ajusta tu puesto", "guia": "saluda"},
+    {"voz": "Si tu dolor es intenso o nuevo, consulta a un profesional de salud.", "ilu": "tarjeta", "icono": "head", "chip": "Consulta si es intenso", "guia": "quieta"},
+    {"voz": "Cada persona responde distinto. Agenda tu hora en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
