@@ -30,7 +30,7 @@ import wave
 
 sys.path.insert(0, __file__.rsplit("/", 1)[0])
 from lib import *  # noqa
-from PIL import Image, ImageDraw, ImageEnhance
+from PIL import Image, ImageDraw, ImageEnhance, ImageFilter
 import numpy as np
 
 FPS_ = FPS if "FPS" in globals() else 30
@@ -68,7 +68,7 @@ class Lector:
     def __init__(self, path, ini, dur, w, h):
         self.n = w * h * 3
         self.w, self.h = w, h
-        self.p = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", f"{ini:.3f}", "-t", f"{dur + 0.5:.3f}", "-i", path, "-vf", f"fps={FPS}",
+        self.p = subprocess.Popen(["ffmpeg", "-v", "error", "-ss", f"{ini:.3f}", "-t", f"{dur + 0.5:.3f}", "-i", path, "-vf", f"fps={FPS},hqdn3d=2:1.5:3:3",
                                    "-f", "rawvideo", "-pix_fmt", "rgb24", "-"], stdout=subprocess.PIPE)
         self.ultimo = None
 
@@ -92,15 +92,21 @@ def encuadre(src, zoom, cx, cy):
     cw, ch = w / zoom, h / zoom
     x0 = min(max(cx * w - cw / 2, 0), w - cw)
     y0 = min(max(cy * h - ch / 2, 0), h - ch)
-    f = src.resize((W, H), Image.LANCZOS, box=(x0, y0, x0 + cw, y0 + ch))
-    return f
+    # fuente de baja resolución: subir en dos pasos, afinar y dar algo de contraste y color
+    f = src.resize((W // 2, H // 2), Image.LANCZOS, box=(x0, y0, x0 + cw, y0 + ch))
+    f = f.filter(ImageFilter.UnsharpMask(radius=1.4, percent=90, threshold=2))
+    f = f.resize((W, H), Image.LANCZOS)
+    f = f.filter(ImageFilter.UnsharpMask(radius=2.2, percent=70, threshold=3))
+    f = ImageEnhance.Contrast(f).enhance(1.07)
+    f = ImageEnhance.Color(f).enhance(1.10)
+    return ImageEnhance.Brightness(f).enhance(1.04)
 
 
 def degradados():
     a = np.zeros((H, W, 4), np.uint8)
     y = np.arange(H)[:, None].astype(np.float32)
-    top = np.clip(1 - y / 560, 0, 1) ** 1.6 * 170
-    bot = np.clip((y - 1180) / 740, 0, 1) ** 1.4 * 200
+    top = np.clip(1 - y / 560, 0, 1) ** 1.6 * 120
+    bot = np.clip((y - 1180) / 740, 0, 1) ** 1.4 * 150
     a[..., 3] = np.clip(top + bot, 0, 255).astype(np.uint8)[:, :1].repeat(W, axis=1)
     return Image.fromarray(a, "RGBA")
 
@@ -244,7 +250,7 @@ def main():
     ff = subprocess.Popen(
         ["ffmpeg", "-v", "error", "-y", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-", "-i", wavp,
          "-af", "highpass=f=80,afftdn=nr=10:nf=-45,acompressor=threshold=-22dB:ratio=3:attack=5:release=90,loudnorm=I=-16:TP=-1.5:LRA=7,aresample=48000",
-         "-ac", "2", "-t", f"{total:.2f}", "-c:v", "libx264", "-preset", "veryfast", "-crf", "19", "-pix_fmt", "yuv420p", "-profile:v", "high",
+         "-ac", "2", "-t", f"{total:.2f}", "-c:v", "libx264", "-preset", "fast", "-crf", "16", "-pix_fmt", "yuv420p", "-profile:v", "high",
          "-c:a", "aac", "-b:a", "160k", "-shortest", "-movflags", "+faststart", out], stdin=subprocess.PIPE)
 
     n = int(total * FPS)
