@@ -8,62 +8,54 @@
  "escenas": [
   {
    "voz": "Un médico avisó a un rey. Y el rey no quiso escuchar.",
-   "ilu": "tarjeta",
-   "icono": "head",
+   "ilu": "cuento",
    "etiqueta": "Cuento clásico",
-   "guia": "saluda",
-   "fondo": "calido"
+   "fondo": "calido",
+   "accion": "gancho"
   },
   {
    "voz": "Hace más de dos mil años, el famoso médico Bian Que visitó al duque Huan de Cai.",
-   "ilu": "pergamino",
+   "ilu": "cuento",
    "etiqueta": "Cuento clásico",
-   "rotulo": "Bian Que y el duque",
-   "guia": "quieta"
+   "accion": "llega"
   },
   {
    "voz": "Lo miró un momento y le dijo: tienes un mal en la piel. Trátalo hoy.",
-   "ilu": "tarjeta",
-   "icono": "body",
+   "ilu": "cuento",
    "etiqueta": "Primer aviso",
    "callout": "Un mal en la piel",
    "callout_tipo": "info",
-   "guia": "saluda"
+   "accion": "aviso"
   },
   {
    "voz": "El duque respondió: yo no tengo nada. Y se burló de los médicos que inventan enfermedades.",
-   "ilu": "tarjeta",
-   "icono": "head",
+   "ilu": "cuento",
    "etiqueta": "Sin escuchar",
-   "callout": "Yo no tengo nada",
-   "callout_tipo": "no",
-   "guia": "quieta",
-   "fondo": "calido"
+   "fondo": "calido",
+   "accion": "rechazo"
   },
   {
    "voz": "Pasaron los días y Bian Que volvió, con el mismo aviso, cada vez con el mal más adentro.",
-   "ilu": "meridianos",
+   "ilu": "cuento",
    "etiqueta": "Más avisos",
-   "dato": "3 avisos",
-   "guia": "quieta"
+   "accion": "dias"
   },
   {
    "voz": "A la cuarta vez, Bian Que lo vio de lejos, dio media vuelta y se fue.",
-   "ilu": "pergamino",
+   "ilu": "cuento",
    "etiqueta": "Demasiado tarde",
-   "rotulo": "Ya era demasiado tarde",
-   "guia": "saluda",
-   "fondo": "calido"
+   "fondo": "calido",
+   "accion": "huida"
   },
   {
    "voz": "La enseñanza del cuento: escucha las señales de tu cuerpo y consulta a tiempo.",
-   "ilu": "tarjeta",
-   "icono": "leaf",
+   "ilu": "cuento",
    "etiqueta": "La enseñanza",
    "callout": "Escucha tu cuerpo",
    "callout_tipo": "ok",
-   "guia": "saluda",
-   "fondo": "verde"
+   "fondo": "verde",
+   "accion": "senal",
+   "guia": "saluda"
   },
   {
    "voz": "Es un cuento clásico, no un consejo médico. Si algo te preocupa, consulta. Conoce más en AcupunturaChile.",
