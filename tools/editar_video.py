@@ -62,6 +62,31 @@ def audio_fuente(path):
     return x, w.getframerate()
 
 
+_SR = None
+
+
+def superres(im):
+    """Súper-resolución x2 (FSRCNN de OpenCV) si el modelo está disponible; si no, devuelve la imagen igual."""
+    global _SR
+    if _SR is None:
+        _SR = False
+        try:
+            import cv2
+            m = os.environ.get("FSRCNN", "/tmp/sr/FSRCNN_x2.pb")
+            if os.path.exists(m) and im.width < 800:
+                r = cv2.dnn_superres.DnnSuperResImpl_create()
+                r.readModel(m)
+                r.setModel("fsrcnn", 2)
+                _SR = r
+        except Exception:
+            _SR = False
+    if not _SR or im.width >= 800:
+        return im
+    import cv2
+    a = cv2.cvtColor(np.asarray(im), cv2.COLOR_RGB2BGR)
+    return Image.fromarray(cv2.cvtColor(_SR.upsample(a), cv2.COLOR_BGR2RGB))
+
+
 class Lector:
     """Lee cuadros de una fuente (fps fijo) de forma secuencial."""
 
@@ -75,7 +100,8 @@ class Lector:
     def siguiente(self):
         b = self.p.stdout.read(self.n)
         if len(b) == self.n:
-            self.ultimo = Image.frombytes("RGB", (self.w, self.h), b)
+            im = Image.frombytes("RGB", (self.w, self.h), b)
+            self.ultimo = superres(im)
         return self.ultimo
 
     def cerrar(self):
@@ -94,9 +120,9 @@ def encuadre(src, zoom, cx, cy):
     y0 = min(max(cy * h - ch / 2, 0), h - ch)
     # fuente de baja resolución: subir en dos pasos, afinar y dar algo de contraste y color
     f = src.resize((W // 2, H // 2), Image.LANCZOS, box=(x0, y0, x0 + cw, y0 + ch))
-    f = f.filter(ImageFilter.UnsharpMask(radius=1.4, percent=90, threshold=2))
+    f = f.filter(ImageFilter.UnsharpMask(radius=1.2, percent=60, threshold=2))
     f = f.resize((W, H), Image.LANCZOS)
-    f = f.filter(ImageFilter.UnsharpMask(radius=2.2, percent=70, threshold=3))
+    f = f.filter(ImageFilter.UnsharpMask(radius=2.0, percent=55, threshold=3))
     f = ImageEnhance.Contrast(f).enhance(1.07)
     f = ImageEnhance.Color(f).enhance(1.10)
     return ImageEnhance.Brightness(f).enhance(1.04)
