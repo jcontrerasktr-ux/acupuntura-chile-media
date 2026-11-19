@@ -1,0 +1,73 @@
+{
+ "tag": "CUENTO DE MEDICINA CHINA",
+ "hook": "Un médico avisó a un rey. *El rey no escuchó.*",
+ "web": "acupuntura-chile.cl",
+ "voz_id": 28,
+ "voz_velocidad": 0.95,
+ "cierre_texto": "Guarda y comparte esta historia",
+ "escenas": [
+  {
+   "voz": "Un médico avisó a un rey. Y el rey no quiso escuchar.",
+   "ilu": "tarjeta",
+   "icono": "head",
+   "etiqueta": "Cuento clásico",
+   "guia": "saluda",
+   "fondo": "calido"
+  },
+  {
+   "voz": "Hace más de dos mil años, el famoso médico Bian Que visitó al duque Huan de Cai.",
+   "ilu": "pergamino",
+   "etiqueta": "Cuento clásico",
+   "rotulo": "Bian Que y el duque",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Lo miró un momento y le dijo: tienes un mal en la piel. Trátalo hoy.",
+   "ilu": "tarjeta",
+   "icono": "body",
+   "etiqueta": "Primer aviso",
+   "callout": "Un mal en la piel",
+   "callout_tipo": "info",
+   "guia": "saluda"
+  },
+  {
+   "voz": "El duque respondió: yo no tengo nada. Y se burló de los médicos que inventan enfermedades.",
+   "ilu": "tarjeta",
+   "icono": "head",
+   "etiqueta": "Sin escuchar",
+   "callout": "Yo no tengo nada",
+   "callout_tipo": "no",
+   "guia": "quieta",
+   "fondo": "calido"
+  },
+  {
+   "voz": "Pasaron los días y Bian Que volvió, con el mismo aviso, cada vez con el mal más adentro.",
+   "ilu": "meridianos",
+   "etiqueta": "Más avisos",
+   "dato": "3 avisos",
+   "guia": "quieta"
+  },
+  {
+   "voz": "A la cuarta vez, Bian Que lo vio de lejos, dio media vuelta y se fue.",
+   "ilu": "pergamino",
+   "etiqueta": "Demasiado tarde",
+   "rotulo": "Ya era demasiado tarde",
+   "guia": "saluda",
+   "fondo": "calido"
+  },
+  {
+   "voz": "La enseñanza del cuento: escucha las señales de tu cuerpo y consulta a tiempo.",
+   "ilu": "tarjeta",
+   "icono": "leaf",
+   "etiqueta": "La enseñanza",
+   "callout": "Escucha tu cuerpo",
+   "callout_tipo": "ok",
+   "guia": "saluda",
+   "fondo": "verde"
+  },
+  {
+   "voz": "Es un cuento clásico, no un consejo médico. Si algo te preocupa, consulta. Conoce más en AcupunturaChile.",
+   "ilu": "cierre"
+  }
+ ]
+}
