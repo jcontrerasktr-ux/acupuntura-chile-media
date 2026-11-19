@@ -72,6 +72,7 @@ Público: adultos de 25 a 60 años en Chile con dolores crónicos (cabeza, espal
 - Hashtags: máximo 5 (límite de Instagram): #acupuntura #AcupunturaChile más 3 relevantes del tema. Cerrar con una invitación a guardar o compartir y, si calza, una pregunta para comentar.
 
 ## Videos propios de Julio
+- Herramienta: `python3 tools/editar_video.py spec.json salida.mp4 portada.jpg` (modelo: `media/2026-11-20-tip-cabeza-manos/spec.json`). El Reel del tip de cabeza con manos (20 nov 2026) lo publica Julio por su cuenta: NO publicarlo ni subir esos videos al repositorio. Las tareas programadas siguen su rutina normal.
 Cuando Julio envía un video en el chat, se edita con corte de silencios, mejora de voz, subtítulos y portada, se sube a `media/` y se publica con el mismo flujo, siempre que confirme la autorización de las personas que aparecen.
 
 ## Contenido ya preparado y mostrado a Julio
