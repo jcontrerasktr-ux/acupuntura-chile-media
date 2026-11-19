@@ -9,56 +9,94 @@
   {
    "voz": "Un médico avisó a un rey. Y el rey no quiso escuchar.",
    "ilu": "cuento",
-   "etiqueta": "Cuento clásico",
-   "fondo": "calido",
-   "accion": "gancho"
+   "accion": "gancho",
+   "fondo": "calido"
   },
   {
    "voz": "Hace más de dos mil años, el famoso médico Bian Que visitó al duque Huan de Cai.",
    "ilu": "cuento",
-   "etiqueta": "Cuento clásico",
-   "accion": "llega"
+   "accion": "llega",
+   "etiqueta": "Cuento clásico"
   },
   {
    "voz": "Lo miró un momento y le dijo: tienes un mal en la piel. Trátalo hoy.",
    "ilu": "cuento",
+   "accion": "aviso",
    "etiqueta": "Primer aviso",
    "callout": "Un mal en la piel",
-   "callout_tipo": "info",
-   "accion": "aviso"
+   "callout_tipo": "info"
   },
   {
    "voz": "El duque respondió: yo no tengo nada. Y se burló de los médicos que inventan enfermedades.",
    "ilu": "cuento",
-   "etiqueta": "Sin escuchar",
+   "accion": "rechazo",
    "fondo": "calido",
-   "accion": "rechazo"
+   "etiqueta": "Sin escuchar"
   },
   {
-   "voz": "Pasaron los días y Bian Que volvió, con el mismo aviso, cada vez con el mal más adentro.",
+   "voz": "Diez días después, Bian Que volvió. Esta vez el mal estaba en la carne, y el duque no respondió.",
    "ilu": "cuento",
-   "etiqueta": "Más avisos",
-   "accion": "dias"
+   "accion": "visita",
+   "etiqueta": "Segundo aviso",
+   "nivel_de": 0,
+   "nivel_a": 1,
+   "frase": "¡Qué tontería!",
+   "duke_expr": "enojo"
   },
   {
-   "voz": "A la cuarta vez, Bian Que lo vio de lejos, dio media vuelta y se fue.",
+   "voz": "Otros diez días y el mal llegó al estómago y los intestinos. El duque seguía molesto.",
    "ilu": "cuento",
+   "accion": "visita",
+   "fondo": "calido",
+   "etiqueta": "Tercer aviso",
+   "nivel_de": 1,
+   "nivel_a": 2,
+   "frase": "¡Déjame en paz!",
+   "duke_expr": "grita"
+  },
+  {
+   "voz": "Según el cuento, cada etapa tenía su remedio: compresas tibias, agujas y hierbas. La última, ninguno.",
+   "ilu": "cuento",
+   "accion": "remedios",
+   "fondo": "verde",
+   "etiqueta": "Según el cuento"
+  },
+  {
+   "voz": "Diez días después, Bian Que lo vio de lejos, dio media vuelta y se fue sin decir nada.",
+   "ilu": "cuento",
+   "accion": "huida",
+   "fondo": "calido",
+   "etiqueta": "Demasiado tarde"
+  },
+  {
+   "voz": "Ya estaba en la médula, y ahí, según el cuento, ningún remedio llegaba.",
+   "ilu": "cuento",
+   "accion": "medula",
    "etiqueta": "Demasiado tarde",
+   "callout": "Ya estaba en la médula",
+   "callout_tipo": "info"
+  },
+  {
+   "voz": "Cinco días después, el duque cayó muy enfermo y llamó a Bian Que, pero ya se había ido.",
+   "ilu": "cuento",
+   "accion": "final",
    "fondo": "calido",
-   "accion": "huida"
+   "etiqueta": "El final",
+   "callout": "Bian Que huyó a Qin",
+   "callout_tipo": "info"
   },
   {
    "voz": "La enseñanza del cuento: escucha las señales de tu cuerpo y consulta a tiempo.",
    "ilu": "cuento",
+   "accion": "senal",
+   "fondo": "verde",
    "etiqueta": "La enseñanza",
    "callout": "Escucha tu cuerpo",
    "callout_tipo": "ok",
-   "fondo": "verde",
-   "accion": "senal",
    "guia": "saluda"
   },
   {
-   "voz": "Es un cuento clásico, no un consejo médico. Si algo te preocupa, consulta. Conoce más en AcupunturaChile.",
+   "voz": "Es un cuento clásico, no un consejo médico. Conoce más en AcupunturaChile.",
    "ilu": "cierre"
   }
  ]

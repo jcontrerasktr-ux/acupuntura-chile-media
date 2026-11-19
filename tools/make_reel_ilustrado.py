@@ -959,8 +959,8 @@ def spr_brazo(kind):
     return im
 
 
-def spr_cabeza(kind, expr):
-    k = ("cab", kind, expr)
+def spr_cabeza(kind, expr, ab=False, bl=False):
+    k = ("cab", kind, expr, ab, bl)
     if k in _PJ:
         return _PJ[k]
     R = RH
@@ -1010,9 +1010,12 @@ def spr_cabeza(kind, expr):
                 d.ellipse((x0, y0, x1, y1), fill=(250, 240, 214, 255))
     # ojos
     esc = 1.0
-    abierto = {"sorpresa": 1.25, "enojo": 0.8, "triste": 0.85}.get(expr, 1.0)
-    mir = {"triste": (0, 4), "preocupado": (3, 0), "enojo": (-3, 0)}.get(expr, (0, 0))
+    abierto = {"sorpresa": 1.3, "enojo": 0.8, "triste": 0.85, "grita": 0.9, "enfermo": 0.5}.get(expr, 1.0)
+    mir = {"triste": (0, 4), "preocupado": (3, 0), "enojo": (-3, 0), "enfermo": (0, 5), "grita": (-2, 0)}.get(expr, (0, 0))
     for ex in (-18, 18):
+        if bl:
+            d.arc((C(ex - 11, -12)[0], C(ex - 11, -12)[1], C(ex + 11, 2)[0], C(ex + 11, 2)[1]), 15, 165, fill=(70, 44, 34, 255), width=int(4 * K * SS))
+            continue
         d.ellipse((C(ex - 11, -6 - 10 * abierto)[0], C(ex - 11, -6 - 10 * abierto)[1], C(ex + 11, -6 + 10 * abierto)[0], C(ex + 11, -6 + 10 * abierto)[1]), fill=(252, 250, 247, 255))
         px, py = ex + mir[0], -6 + mir[1]
         d.ellipse((C(px - 7, py - 7)[0], C(px - 7, py - 7)[1], C(px + 7, py + 7)[0], C(px + 7, py + 7)[1]), fill=(70, 44, 34, 255))
@@ -1022,9 +1025,9 @@ def spr_cabeza(kind, expr):
     bc = (236, 236, 244, 255) if kind == "doc" else (30, 22, 24, 255)
     bw = int((5 if kind == "duque" else 4) * K * SS)
     for sgn in (-1, 1):
-        if expr == "enojo":
-            pts = [C(sgn * 30, -30), C(sgn * 8, -20)]
-        elif expr == "preocupado":
+        if expr in ("enojo", "grita"):
+            pts = [C(sgn * 30, -34 if expr == "grita" else -30), C(sgn * 8, -17 if expr == "grita" else -20)]
+        elif expr in ("preocupado", "enfermo"):
             pts = [C(sgn * 30, -22), C(sgn * 8, -31)]
         elif expr == "sorpresa":
             pts = [C(sgn * 28, -34), C(sgn * 10, -37)]
@@ -1038,9 +1041,15 @@ def spr_cabeza(kind, expr):
         soft(im, lambda x, ex=ex: x.ellipse((C(ex - 9, 6)[0], C(ex - 9, 6)[1], C(ex + 9, 16)[0], C(ex + 9, 16)[1]), fill=(230, 110, 110, 140)), 4)
     d = ImageDraw.Draw(im)
     mc = (140, 64, 64, 255)
-    if expr == "sorpresa":
+    if expr == "grita":
+        d.ellipse((C(-13, 16)[0], C(-13, 16)[1], C(13, 42)[0], C(13, 42)[1]), fill=(110, 30, 40, 255))
+        d.ellipse((C(-8, 31)[0], C(-8, 31)[1], C(8, 42)[0], C(8, 42)[1]), fill=(220, 100, 110, 255))
+        d.rectangle((C(-9, 16)[0], C(-9, 16)[1], C(9, 21)[0], C(9, 21)[1]), fill=(250, 246, 240, 255))
+    elif expr == "sorpresa":
         d.ellipse((C(-7, 18)[0], C(-7, 18)[1], C(7, 34)[0], C(7, 34)[1]), fill=(110, 40, 44, 255))
-    elif expr in ("enojo", "triste", "preocupado"):
+    elif ab:
+        d.ellipse((C(-8, 20)[0], C(-8, 20)[1], C(8, 32)[0], C(8, 32)[1]), fill=(110, 40, 44, 255))
+    elif expr in ("enojo", "triste", "preocupado", "enfermo"):
         d.arc((C(-11, 22)[0], C(-11, 22)[1], C(11, 38)[0], C(11, 38)[1]), 200, 340, fill=mc, width=int(4 * K * SS))
     else:
         d.arc((C(-10, 14)[0], C(-10, 14)[1], C(10, 28)[0], C(10, 28)[1]), 20, 160, fill=mc, width=int(4 * K * SS))
@@ -1056,6 +1065,12 @@ def spr_cabeza(kind, expr):
         d.arc((C(-26, 8)[0], C(-26, 8)[1], C(0, 24)[0], C(0, 24)[1]), 200, 345, fill=(30, 22, 24, 255), width=int(6 * K * SS))
         d.arc((C(0, 8)[0], C(0, 8)[1], C(26, 24)[0], C(26, 24)[1]), 195, 340, fill=(30, 22, 24, 255), width=int(6 * K * SS))
         d.polygon([C(-5, 34), C(5, 34), C(0, 50)], fill=(30, 22, 24, 255))
+    if expr == "enfermo":
+        a = np.asarray(im, dtype=np.float32).copy()
+        a[..., 0] *= 0.80
+        a[..., 1] = np.minimum(255, a[..., 1] * 1.02 + 6)
+        a[..., 2] *= 0.82
+        im = Image.fromarray(a.astype(np.uint8), "RGBA")
     _PJ[k] = im
     return im
 
@@ -1064,13 +1079,14 @@ def _rot(spr, ang):
     return spr.rotate(ang, resample=Image.BICUBIC) if ang else spr
 
 
-def personaje(kind, x, hip_y, lt, alpha=1.0, walk=0.0, aF=8.0, aB=-8.0, head=0.0, expr="neutral", sentado=False, dx_sacudida=0.0):
-    """Capa con un personaje armado con partes. x/hip_y son la cadera en el lienzo; walk>0 anima el paso."""
+def personaje(kind, x, hip_y, lt, alpha=1.0, walk=0.0, aF=8.0, aB=-8.0, head=0.0, expr="neutral", sentado=False,
+              habla=False, lean=0.0, oscuro=0.0):
+    """Capa con un personaje armado con partes. x/hip_y son la cadera; walk>0 anima el paso; habla mueve la boca; lean inclina el cuerpo."""
     lay = new_canvas()
     fase = lt * 9.0
     s = math.sin(fase) * walk
     bob = abs(math.sin(fase)) * 7 * walk + math.sin(lt * 2.2) * 2
-    hx, hy = x + dx_sacudida, hip_y - bob
+    hx, hy = x, hip_y - bob
     d = ImageDraw.Draw(lay)
     if not sentado:                                      # zapatos
         for sg in (-1, 1):
@@ -1080,49 +1096,62 @@ def personaje(kind, x, hip_y, lt, alpha=1.0, walk=0.0, aF=8.0, aB=-8.0, head=0.0
             d.ellipse(((cx - 24 * K) * SS, (cy - 11 * K) * SS, (cx + 24 * K) * SS, (cy + 11 * K) * SS), fill=(58, 40, 34, 255))
     tor = spr_torso(kind)
     over(lay, tor, hx * SS - tor.width / 2, hy * SS - tor.height / 2)
-    cab = _rot(spr_cabeza(kind, expr), head)
+    ab = bool(habla and math.sin(lt * 15 + (0 if kind == "doc" else 2)) > 0.0)
+    bl = ((lt + (1.3 if kind == "duque" else 0.0)) % 3.2) < 0.14
+    cab = _rot(spr_cabeza(kind, expr, ab, bl), head)
     ny = hy - 150 * K
     over(lay, cab, hx * SS - cab.width / 2, ny * SS - cab.height / 2)
     br = spr_brazo(kind)
     for lado, ang in ((-1, aB), (1, aF)):
         b = _rot(br, ang)
         over(lay, b, (hx + lado * 52 * K) * SS - b.width / 2, (hy - 142 * K) * SS - b.height / 2)
+    if lean:
+        lay = lay.rotate(lean, center=(hx * SS, hy * SS), resample=Image.BICUBIC)
+    if oscuro > 0:
+        a = np.asarray(lay, dtype=np.float32).copy()
+        a[..., :3] *= (1 - oscuro)
+        lay = Image.fromarray(a.astype(np.uint8), "RGBA")
     if alpha < 1.0:
         lay.putalpha(lay.getchannel("A").point(lambda v: int(v * max(0.0, alpha))))
     return lay
 
 
-def cabeza_pos(x, hip_y, head=0.0, bob=0.0):
-    """Centro de la cara en el lienzo (para pegar marcas)."""
-    ang = math.radians(head)
-    vy = -52 * K
-    return x + (-math.sin(ang) * vy) * -1 * 0 + math.sin(ang) * 52 * K, hip_y - bob - 150 * K - math.cos(ang) * 52 * K
-
-
-def _palacio():
-    if "palacio" in _BASES:
-        return _BASES["palacio"]
+def _palacio(trono=True):
+    key = ("palacio", trono)
+    if key in _BASES:
+        return _BASES[key]
     im = new_canvas()
     sh = Image.new("RGBA", im.size, (0, 0, 0, 0))
     ImageDraw.Draw(sh).ellipse((sp((20, 640)), sp((780, 735))), fill=(4, 10, 18, 150))
     im.alpha_composite(sh.filter(ImageFilter.GaussianBlur(10 * SS)))
+    # ventana redonda con luna (fondo)
+    wm = mask_new()
+    ImageDraw.Draw(wm).ellipse((sp((242, 170)), sp((418, 346))), fill=255)
+    ven = shaded(wm, light=(52, 96, 122), dark=(10, 28, 44), r=26)
+    dv = ImageDraw.Draw(ven)
+    dv.ellipse((sp((330, 200)), sp((384, 254))), fill=(236, 240, 250, 255))
+    dv.ellipse((sp((344, 194)), sp((402, 252))), fill=(30, 62, 84, 255))
+    for (sx, sy) in ((284, 214), (300, 306), (386, 292), (262, 268)):
+        dv.ellipse((sp((sx - 2, sy - 2)), sp((sx + 2, sy + 2))), fill=(220, 232, 250, 220))
+    dv.ellipse((sp((242, 170)), sp((418, 346))), outline=(255, 214, 96, 255), width=6 * SS)
+    im.alpha_composite(ven)
     ImageDraw.Draw(im).rounded_rectangle((sp((24, 690)), sp((776, 702))), 6 * SS, fill=(24, 40, 56, 255))
-    # trono: respaldo alto y base
-    m = mask_new()
-    dm = ImageDraw.Draw(m)
-    dm.rounded_rectangle((sp((476, 190)), sp((706, 640))), 40 * SS, fill=255)
-    tr = shaded(m, light=(150, 40, 52), dark=(70, 14, 28), r=22)
-    d = ImageDraw.Draw(tr)
-    d.rounded_rectangle((sp((476, 190)), sp((706, 640))), 40 * SS, outline=(255, 214, 96, 255), width=6 * SS)
-    d.rounded_rectangle((sp((498, 214)), sp((684, 600))), 30 * SS, outline=(255, 214, 96, 150), width=3 * SS)
-    im.alpha_composite(tr)
-    bm = mask_new()
-    ImageDraw.Draw(bm).rounded_rectangle((sp((440, 612)), sp((742, 702))), 14 * SS, fill=255)
-    base = shaded(bm, light=(182, 50, 62), dark=(84, 18, 30), r=14)
-    ImageDraw.Draw(base).rounded_rectangle((sp((440, 612)), sp((742, 702))), 14 * SS, outline=(255, 214, 96, 255), width=5 * SS)
-    ImageDraw.Draw(base).line([sp((450, 640)), sp((732, 640))], fill=(255, 214, 96, 200), width=3 * SS)
-    _BASES["palacio"] = (im, base)
-    return _BASES["palacio"]
+    base = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    if trono:
+        m = mask_new()
+        ImageDraw.Draw(m).rounded_rectangle((sp((476, 190)), sp((706, 640))), 40 * SS, fill=255)
+        tr = shaded(m, light=(150, 40, 52), dark=(70, 14, 28), r=22)
+        d = ImageDraw.Draw(tr)
+        d.rounded_rectangle((sp((476, 190)), sp((706, 640))), 40 * SS, outline=(255, 214, 96, 255), width=6 * SS)
+        d.rounded_rectangle((sp((498, 214)), sp((684, 600))), 30 * SS, outline=(255, 214, 96, 150), width=3 * SS)
+        im.alpha_composite(tr)
+        bm = mask_new()
+        ImageDraw.Draw(bm).rounded_rectangle((sp((440, 612)), sp((742, 702))), 14 * SS, fill=255)
+        base = shaded(bm, light=(182, 50, 62), dark=(84, 18, 30), r=14)
+        ImageDraw.Draw(base).rounded_rectangle((sp((440, 612)), sp((742, 702))), 14 * SS, outline=(255, 214, 96, 255), width=5 * SS)
+        ImageDraw.Draw(base).line([sp((450, 640)), sp((732, 640))], fill=(255, 214, 96, 200), width=3 * SS)
+    _BASES[key] = (im, base)
+    return _BASES[key]
 
 
 def linterna(im, lt, brillo=1.0):
@@ -1134,17 +1163,32 @@ def linterna(im, lt, brillo=1.0):
     sw = math.sin(lt * 1.4) * 4
     d.line([sp((135 + sw, 0)), sp((135 + sw, 60))], fill=(210, 170, 90, 255), width=3 * SS)
     d.rounded_rectangle((sp((108 + sw, 60)), sp((162 + sw, 122))), 18 * SS, fill=(214, 60, 52, 255), outline=(255, 214, 96, 255), width=3 * SS)
-    d.ellipse((sp((122 + sw, 76)), sp((148 + sw, 106))), fill=(255, int(190 * fl) + 40, 90, 255))
+    d.ellipse((sp((122 + sw, 76)), sp((148 + sw, 106))), fill=(255, min(255, int(190 * fl) + 40), 90, 255))
     d.rectangle((sp((120 + sw, 120)), sp((150 + sw, 126))), fill=(255, 214, 96, 255))
 
 
-def marca(im, cx, cy, lt, u, rondas=True):
+def chispas(im, lt):
+    """Motas de luz cálidas que suben por el salón."""
+    lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    for i in range(18):
+        x0 = (i * 97) % 760 + 20
+        y = 700 - (lt * (22 + (i % 5) * 7) + i * 61) % 640
+        x = x0 + 16 * math.sin(lt * 1.2 + i)
+        r = 2 + (i % 3)
+        a = int(80 + 120 * (0.5 + 0.5 * math.sin(lt * 3 + i)))
+        d.ellipse(((x - r) * SS, (y - r) * SS, (x + r) * SS, (y + r) * SS), fill=(255, 214, 140, a))
+    im.alpha_composite(lay.filter(ImageFilter.GaussianBlur(1.2 * SS)))
+
+
+def marca(im, cx, cy, lt, u, rondas=True, alerta=False):
     """Mancha brillante en la piel (u de 0 a 1: más grande y más oscura)."""
     r = (10 + 17 * u) * K
     col = (int(255 - 55 * u), int(176 - 110 * u), int(60 - 20 * u))
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
     dl = ImageDraw.Draw(lay)
-    dl.ellipse(((cx - r) * SS, (cy - r) * SS, (cx + r) * SS, (cy + r) * SS), fill=col + (220,))
+    pul = 1 + 0.12 * math.sin(lt * 6) * u
+    dl.ellipse(((cx - r * pul) * SS, (cy - r * pul) * SS, (cx + r * pul) * SS, (cy + r * pul) * SS), fill=col + (220,))
     lay = halo(lay, r=10, k=0.9)
     im.alpha_composite(lay)
     if rondas:
@@ -1154,6 +1198,40 @@ def marca(im, cx, cy, lt, u, rondas=True):
             ring = Image.new("RGBA", im.size, (0, 0, 0, 0))
             ImageDraw.Draw(ring).ellipse(((cx - rr) * SS, (cy - rr) * SS, (cx + rr) * SS, (cy + rr) * SS), outline=(255, 205, 40, int(210 * (1 - ph))), width=4 * SS)
             im.alpha_composite(ring)
+
+
+def sudor(im, x, y, lt):
+    lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    for j in range(2):
+        ph = (lt * 1.1 + j * 0.5) % 1.0
+        yy, xx = y + 34 * ph, x + j * 18
+        a = int(230 * (1 - ph))
+        d.ellipse(((xx - 6) * SS, (yy - 3) * SS, (xx + 6) * SS, (yy + 12) * SS), fill=(150, 214, 252, a))
+        d.polygon([((xx - 5) * SS, (yy + 1) * SS), ((xx + 5) * SS, (yy + 1) * SS), (xx * SS, (yy - 12) * SS)], fill=(150, 214, 252, a))
+    im.alpha_composite(lay)
+
+
+def vena(im, x, y, lt):
+    """Marca de enojo (cruz roja que late)."""
+    s = 1 + 0.18 * math.sin(lt * 14)
+    lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    for sx, sy in ((-1, -1), (1, -1), (-1, 1), (1, 1)):
+        p0 = (x + sx * 5 * s, y + sy * 5 * s)
+        d.line([((p0[0] + sx * 0) * SS, (p0[1] + sy * 14 * s) * SS), (p0[0] * SS, p0[1] * SS), ((p0[0] + sx * 14 * s) * SS, p0[1] * SS)], fill=(236, 60, 60, 255), width=int(5 * SS), joint="curve")
+    im.alpha_composite(halo(lay, r=6, k=0.7))
+
+
+def polvo(im, x, y, lt, dir_=1):
+    lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(lay)
+    for j in range(3):
+        ph = (lt * 2.2 + j / 3) % 1.0
+        r = 5 + 15 * ph
+        xx, yy = x - dir_ * (14 + 36 * ph), y - 10 * ph
+        d.ellipse(((xx - r) * SS, (yy - r * 0.7) * SS, (xx + r) * SS, (yy + r * 0.7) * SS), fill=(214, 204, 196, int(130 * (1 - ph))))
+    im.alpha_composite(lay.filter(ImageFilter.GaussianBlur(2 * SS)))
 
 
 def burbuja(im, texto, cx, cy, u):
@@ -1190,12 +1268,23 @@ def exclama(im, cx, cy, lt, u):
     if s != 1.0:
         lay = lay.resize((max(1, int(lay.width * s)), max(1, int(lay.height * s))), Image.LANCZOS)
         full = new_canvas()
-        full.alpha_composite(lay, (int(CW * SS / 2 - lay.width / 2) if False else int(cx * SS - lay.width / 2), int(cy * SS - lay.height / 2)))
+        full.alpha_composite(lay, (int(cx * SS - lay.width / 2), int(cy * SS - lay.height / 2)))
         lay = full
     im.alpha_composite(lay)
 
 
-def medidor(im, nivel):
+def pop_label(im, texto, cx, cy, u, fill=YEL, fg=TEAL_D, size=28):
+    """Etiqueta que aparece con rebote."""
+    if u <= 0:
+        return
+    s = max(0.05, rebote(u))
+    tmp = Image.new("RGBA", (460 * SS, 110 * SS), (0, 0, 0, 0))
+    label(ImageDraw.Draw(tmp), texto, 230, 55, fill=fill, fg=fg, size=size)
+    tmp = tmp.resize((max(1, int(tmp.width * s)), max(1, int(tmp.height * s))), Image.LANCZOS)
+    over(im, tmp, cx * SS - tmp.width / 2, cy * SS - tmp.height / 2)
+
+
+def medidor(im, nivel, lt=0.0, alerta=False):
     """Profundidad del mal: piel, carne, intestinos, médula (se va encendiendo)."""
     d = ImageDraw.Draw(im)
     nom = ["Piel", "Carne", "Intestinos", "Médula"]
@@ -1204,25 +1293,41 @@ def medidor(im, nivel):
     d.line([sp((100, ys[0])), sp((100, ys[0] + (ys[-1] - ys[0]) * min(1.0, nivel / 3.0)))], fill=YEL + (255,), width=7 * SS)
     for i, (n, y) in enumerate(zip(nom, ys)):
         on = nivel >= i - 0.01
-        pop = rebote((nivel - i) / 0.5) if on else 0
+        actual = on and nivel < i + 1 - 0.01 or (i == 3 and nivel >= 2.99)
         fill = YEL if on else (54, 84, 108)
         fg = TEAL_D if on else (170, 196, 216)
-        label(d, n, 100, y, fill=fill, fg=fg, size=26)
-        if on:
-            r = (10 + 5 * pop) * SS
-            x, yy = 100 * SS, y * SS
-            d.ellipse((x - r - 80 * SS, yy - r, x + r - 80 * SS, yy + r), outline=YEL + (200,), width=0)
+        if on and alerta and i == 3:
+            fill, fg = (255, 110, 96), (255, 255, 255)
+        if actual:
+            pop_label(im, n, 100, y, 1.0, fill=fill, fg=fg, size=28 + int(2 * math.sin(lt * 6)))
+        else:
+            label(d, n, 100, y, fill=fill, fg=fg, size=26)
+
+
+def tabla_remedios(im, lt, u):
+    """Según el cuento: remedio de cada etapa."""
+    filas = [("Piel", "Compresas tibias", 0.10, YEL), ("Carne", "Agujas", 0.32, YEL), ("Intestinos", "Hierbas", 0.54, YEL), ("Médula", "Sin remedio", 0.76, (255, 110, 96))]
+    ys = [190, 325, 460, 595]
+    d = ImageDraw.Draw(im)
+    d.line([sp((560, ys[0] + 60)), sp((560, ys[-1] - 12))], fill=(120, 150, 175, 90), width=3 * SS)
+    for (a, b, t0, col), y in zip(filas, ys):
+        k = (u - t0) / 0.14
+        if k <= 0:
+            continue
+        fg = (255, 255, 255) if col != YEL else TEAL_D
+        pop_label(im, a, 560, y, k, fill=(54, 84, 108), fg=(220, 236, 248), size=26)
+        pop_label(im, b, 560, y + 68, k - 0.15, fill=col, fg=fg, size=30)
 
 
 def astros(im, lt):
     """Sol y luna cruzando el cielo: pasan los días."""
     d = ImageDraw.Draw(im)
-    pts = [(250 + 440 * u / 40, 150 - 80 * math.sin(math.pi * u / 40)) for u in range(41)]
+    pts = [(250 + 440 * i / 40, 135 - 70 * math.sin(math.pi * i / 40)) for i in range(41)]
     for p in pts[::3]:
         d.ellipse(((p[0] - 2) * SS, (p[1] - 2) * SS, (p[0] + 2) * SS, (p[1] + 2) * SS), fill=(150, 180, 205, 140))
-    v = lt * 0.62
-    u = v % 1.0
-    x, y = 250 + 440 * u, 150 - 80 * math.sin(math.pi * u)
+    v = lt * 0.8
+    uu = v % 1.0
+    x, y = 250 + 440 * uu, 135 - 70 * math.sin(math.pi * uu)
     sol = int(v) % 2 == 0
     lay = Image.new("RGBA", im.size, (0, 0, 0, 0))
     dl = ImageDraw.Draw(lay)
@@ -1230,14 +1335,18 @@ def astros(im, lt):
         dl.ellipse(((x - 24) * SS, (y - 24) * SS, (x + 24) * SS, (y + 24) * SS), fill=YEL + (255,))
     else:
         dl.ellipse(((x - 22) * SS, (y - 22) * SS, (x + 22) * SS, (y + 22) * SS), fill=(226, 234, 246, 255))
-        dl.ellipse(((x - 8) * SS, (y - 26) * SS, (x + 34) * SS, (y + 18) * SS), fill=(0, 0, 0, 0))
     im.alpha_composite(halo(lay, r=12, k=0.9))
 
 
 def ilu_cuento(t, lt, sc):
-    """Escena actuada del cuento. "accion": gancho | llega | aviso | rechazo | dias | huida | senal."""
+    """Escena actuada del cuento. "accion": gancho | llega | aviso | rechazo | visita | remedios | huida | medula | final | senal."""
     acc = sc.get("accion", "llega")
     dur = max(1.0, sc["end"] - sc["start"])
+    u = lt / dur
+
+    def ph(a, b):
+        return max(0.0, min(1.0, (u - a) / (b - a)))
+
     im = new_canvas()
     if acc == "senal":
         ic = icon("body")
@@ -1245,96 +1354,155 @@ def ilu_cuento(t, lt, sc):
         ic = ic.resize((int(ic.width * k), int(ic.height * k)), Image.LANCZOS)
         cx, cy = 520, 400
         for j in range(3):
-            ph = (lt * 0.8 + j / 3) % 1.0
-            rr = 90 + 190 * ph
+            pp = (lt * 0.8 + j / 3) % 1.0
+            rr = 90 + 190 * pp
             ring = Image.new("RGBA", im.size, (0, 0, 0, 0))
-            ImageDraw.Draw(ring).ellipse(((cx - rr) * SS, (cy - rr) * SS, (cx + rr) * SS, (cy + rr) * SS), outline=(255, 205, 40, int(230 * (1 - ph))), width=5 * SS)
+            ImageDraw.Draw(ring).ellipse(((cx - rr) * SS, (cy - rr) * SS, (cx + rr) * SS, (cy + rr) * SS), outline=(255, 205, 40, int(230 * (1 - pp))), width=5 * SS)
             im.alpha_composite(ring)
         im.alpha_composite(ic, (int(cx * SS - ic.width / 2), int(cy * SS - ic.height / 2 + 6 * SS * math.sin(lt * 1.8))))
+        chispas(im, lt)
         if sc.get("etiqueta"):
             label(ImageDraw.Draw(im), sc["etiqueta"], 190, 40)
         return im
-    fondo, base = _palacio()
+    fondo, base = _palacio(acc != "remedios")
     im.alpha_composite(fondo)
+    chispas(im, lt)
     ln = new_canvas()
-    linterna(ln, lt, brillo=(max(0.25, 1 - 0.75 * lt / dur) if acc == "huida" else 1.0))
+    linterna(ln, lt, brillo=(max(0.25, 1 - 0.75 * u) if acc in ("huida", "medula", "final") else 1.0))
     over(im, ln, 570 * SS, 0)
-    HIP = PISO - 122 * K          # cadera de pie
-    DHIP = 585                    # cadera del duque sentado
-    DX = 590
-    exp_d, head_d, aF_d, aB_d, mk, burb, sac = "neutral", 0.0, -10.0, 10.0, None, None, 0.0
-    ba = dict(x=230, walk=0.0, aF=8.0, aB=-8.0, head=0.0, expr="neutral", alpha=1.0)
-    ex_ = None
+    HIP = PISO - 122 * K
+    DHIP, DX = 585, 590
+    DHY = DHIP - 150 * K - 52 * K              # centro de la cara del duque
+    B = dict(x=230.0, walk=0.0, aF=8.0, aB=-8.0, head=0.0, expr="neutral", alpha=1.0, habla=False, lean=0.0, oscuro=0.0)
+    D = dict(expr="neutral", head=0.0, aF=-10.0, aB=10.0, habla=False, lean=0.0, oscuro=0.0)
+    mk = None            # (u de la mancha, rondas)
+    burb = None
+    fx = []              # efectos
+    mostrar_doc, mostrar_duque = True, True
+    nivel, alerta = None, False
+    lejos = None         # Bian Que pequeño y lejano: (x, alpha)
+    s9 = math.sin(lt * 9.0)
     if acc == "gancho":
-        ba.update(aF=100 + 8 * math.sin(lt * 6), aB=-8, head=3 * math.sin(lt * 4), expr="preocupado", x=215)
+        B.update(aF=100 + 8 * math.sin(lt * 6), aB=-14, head=3 * math.sin(lt * 4), expr="preocupado", x=215, habla=lt < 3.0, lean=-4 * math.sin(lt * 5))
         if lt > 0.9:
-            exp_d, head_d = "sorpresa", 0
-        ex_ = ("exc", 215, 250, lt, (lt - 0.25) / 0.45)
+            D.update(expr="sorpresa", lean=4, head=-4)
+        fx.append(("exc", 215, 250, lt, (lt - 0.25) / 0.45))
     elif acc == "llega":
-        u = ease((lt - 0.2) / 2.6)
-        ba["x"] = -60 + 290 * u
+        uu = ease((lt - 0.2) / 2.6)
         mov = 0.2 < lt < 2.8
-        ba["walk"] = 1.0 if mov else 0.0
-        ba["alpha"] = min(1.0, lt / 0.5)
+        B.update(x=-60 + 290 * uu, walk=1.0 if mov else 0.0, alpha=min(1.0, lt / 0.5))
         if mov:
-            s = math.sin(lt * 9.0)
-            ba.update(aF=25 * s, aB=25 * s * -1 + 0)
+            B.update(aF=28 * s9, aB=-28 * s9, lean=-3)
+            fx.append(("polvo", B["x"], PISO - 4, lt))
         elif lt >= 2.8:
             f = min(1.0, (lt - 2.8) / 0.5)
-            ba.update(aF=72 * f, aB=-72 * f * 0 - 8 + 0, head=16 * math.sin(math.pi * min(1.0, (lt - 2.8) / 1.0)), expr="neutral")
-        aF_d = -18 * ease((lt - 3.0) / 0.6) - 10
+            reverencia = math.sin(math.pi * min(1.0, (lt - 2.8) / 1.2))
+            B.update(aF=72 * f, aB=-8, lean=-16 * reverencia, head=-8 * reverencia, habla=lt > 3.9)
+        D.update(aF=-18 * ease((lt - 3.0) / 0.6) - 10, head=2 * math.sin(lt * 2))
     elif acc == "aviso":
-        ba.update(x=240, aF=96 + 5 * math.sin(lt * 5), head=4 * math.sin(lt * 3), expr="preocupado")
-        if 0.9 < lt < 1.9:
-            exp_d = "sorpresa"
-        hx, hy = x_, y_ = DX, DHIP - 150 * K - 52 * K
-        u = ease((lt - 0.7) / 0.6)
+        B.update(x=240, aF=96 + 6 * math.sin(lt * 5), aB=-12, head=4 * math.sin(lt * 3), expr="preocupado", habla=True, lean=-6 + 2 * math.sin(lt * 4))
+        if 0.9 < lt < 2.0:
+            D.update(expr="sorpresa", lean=3)
         if lt > 0.7:
-            mk = (DX - 27, DHIP - 150 * K - 52 * K + 12, 0.12 + 0.1 * u, lt)
+            mk = (0.12 + 0.12 * ease((lt - 0.7) / 0.6), True)
+        if lt > 2.2:
+            D.update(expr="neutral", head=-6)
     elif acc == "rechazo":
-        ba.update(x=230 - 22 * ease(lt / 1.0), aF=14, aB=-10, head=-7, expr="triste")
-        exp_d = "enojo"
+        B.update(x=230 - 22 * ease(lt / 1.0), aF=14, aB=-10, head=-7, expr="triste", lean=6 * ease(lt / 1.0))
+        fx.append(("sudor", 232 - 22, 330, lt))
+        D.update(expr="enojo")
         if lt > 0.3:
-            head_d = 10 * math.sin((lt - 0.3) * 11) * min(1.0, (lt - 0.3) / 0.3)
-            aF_d = -(78 + 22 * math.sin(lt * 9))
-        mk = (DX - 27, DHIP - 150 * K - 52 * K + 12, 0.2, lt)
+            amp = min(1.0, (lt - 0.3) / 0.3)
+            D.update(expr="grita", head=11 * math.sin((lt - 0.3) * 11) * amp, aF=-(78 + 24 * math.sin(lt * 9)), aB=24 + 10 * math.sin(lt * 9 + 1),
+                     habla=True, lean=5 * math.sin(lt * 8) * amp)
+            fx.append(("vena", DX + 46, DHY - 40, lt))
+        mk = (0.2, False)
         burb = ("¡No tengo nada!", 590, 225, (lt - 0.4) / 0.4)
-    elif acc == "dias":
-        paso = math.cos(lt * 1.5)
-        ba["x"] = 330 + 50 * math.sin(lt * 1.5)
-        ba["walk"] = min(1.0, abs(paso) * 1.4)
-        s = math.sin(lt * 9.0)
-        ba.update(aF=20 * s + 60 * max(0, math.sin(lt * 1.5 + 1)), aB=-20 * s, head=6 * math.sin(lt * 1.5), expr="preocupado")
-        exp_d, head_d = "enojo", -16
-        aF_d, aB_d = -40, 40
-        mk = (DX - 27, DHIP - 150 * K - 52 * K + 12, min(1.0, 0.25 + 0.75 * lt / dur), lt)
+    elif acc == "visita":
+        n0, n1 = float(sc.get("nivel_de", 0)), float(sc.get("nivel_a", 1))
+        p1, p2 = ph(0, 0.28), ph(0.28, 0.62)
+        niv = n0 + (n1 - n0) * ease(ph(0.32, 0.58))
+        nivel = niv
+        mk = (0.15 + 0.28 * niv, True)
+        if u < 0.28:
+            B.update(x=170 + 120 * ease(p1), walk=1.0 if p1 < 0.97 else 0.0, alpha=min(1.0, lt / 0.4), aF=28 * s9, aB=-28 * s9, lean=-3)
+            if p1 < 0.97:
+                fx.append(("polvo", B["x"], PISO - 4, lt))
+        elif u < 0.62:
+            B.update(x=290, aF=98 + 6 * math.sin(lt * 5), aB=-12, expr="preocupado", habla=True, lean=-6, head=3 * math.sin(lt * 3))
+            if 0.34 < u < 0.46:
+                D.update(expr="sorpresa", lean=3)
+        else:
+            q = ph(0.62, 0.8)
+            B.update(x=290 - 14 * ease(q), aF=14, aB=-10, expr="triste", lean=6 * ease(q), head=-7)
+            fx.append(("sudor", 276, 330, lt))
+            D.update(expr=sc.get("duke_expr", "enojo"), head=9 * math.sin((u - 0.62) * dur * 10) * min(1, q * 3), aF=-(70 + 22 * math.sin(lt * 9)), aB=22,
+                     habla=True, lean=4 * math.sin(lt * 8) * min(1, q * 3))
+            if sc.get("frase"):
+                burb = (sc["frase"], 590, 225, (u - 0.64) / 0.12)
+            fx.append(("vena", DX + 46, DHY - 40, lt))
+    elif acc == "remedios":
+        mostrar_duque = False
+        B.update(x=190, aF=80 + 12 * math.sin(lt * 3.2), aB=-12 + 8 * math.sin(lt * 2.4), expr="neutral", habla=True, head=4 * math.sin(lt * 2.5), lean=-4 + 2 * math.sin(lt * 2))
+        tabla_remedios(im, lt, u)
     elif acc == "huida":
-        pausa, sal = 0.6, 3.2
-        u = ease((lt - pausa) / sal) if lt > pausa else 0.0
-        ba["x"] = 250 - 420 * u
-        mov = lt > pausa
-        ba["walk"] = 1.0 if mov else 0.0
-        s = math.sin(lt * 9.0)
-        ba.update(aF=26 * s if mov else 8, aB=-26 * s if mov else -8, head=-14 if not mov else -8, expr="triste")
-        ba["alpha"] = max(0.0, min(1.0, (ba["x"] + 40) / 140))
-        exp_d, head_d = "triste", -14 * ease(lt / 1.2)
-        aF_d, aB_d = -4, 4
-        mk = (DX - 27, DHIP - 150 * K - 52 * K + 12, 1.0, lt)
-    if acc in ("aviso", "rechazo", "dias", "huida") and not mk:
-        mk = None
-    if acc == "dias":
+        pausa = 0.7
+        moviendo = lt > pausa
+        uu = ease((lt - pausa) / 3.0) if moviendo else 0.0
+        B.update(x=250 - 420 * uu, walk=1.0 if moviendo else 0.0, aF=26 * s9 if moviendo else 8, aB=-26 * s9 if moviendo else -8,
+                 head=-14 if not moviendo else -8, expr="triste", lean=(8 if moviendo else -3 + 3 * math.sin(lt * 5)))
+        B["alpha"] = max(0.0, min(1.0, (B["x"] + 40) / 140))
+        if moviendo and B["alpha"] > 0.05:
+            fx.append(("polvo", B["x"] + 30, PISO - 4, lt, -1))
+        D.update(expr="triste", head=-14 * ease(lt / 1.2), aF=-4, aB=4)
+        mk = (0.6, False)
+        if lt > 0.2:
+            fx.append(("exc_pequeno",))
+    elif acc == "medula":
+        mostrar_doc = False
+        D.update(expr="enfermo", head=-16 + 2 * math.sin(lt * 2), aF=-4, aB=4, lean=3 * math.sin(lt * 1.6), oscuro=0.18 * ph(0, 1), habla=False)
+        mk = (1.0, False)
+        nivel, alerta = 3.0, True
+        lejos = (430 - 150 * ph(0, 1), 1 - 0.6 * ph(0.6, 1))
+        fx.append(("sudor", DX - 36, DHY - 30, lt))
+    elif acc == "final":
+        mostrar_doc = False
+        sac = 5 * math.sin(lt * 10) * min(1, ph(0.0, 0.2))
+        D.update(expr="grita" if u > 0.3 else "enfermo", head=-10 + 6 * math.sin(lt * 9), aF=-30 + 20 * math.sin(lt * 8), aB=30 - 20 * math.sin(lt * 8),
+                 lean=sac, oscuro=0.1 + 0.25 * ph(0.3, 1), habla=u > 0.3)
+        mk = (1.0, False)
+        fx.append(("sudor", DX - 36, DHY - 30, lt))
+        burb = ("¡Llamen a Bian Que!", 590, 225, (u - 0.3) / 0.12)
+        if u > 0.62:
+            fx.append(("vacio", lt, (u - 0.62) / 0.12))
+    if nivel is not None:
+        medidor(im, nivel, lt, alerta)
+    if acc in ("visita",):
         astros(im, lt)
-        medidor(im, min(3.0, lt / dur * 3.6))
-    # personajes
-    alpha_b = ba["alpha"]
-    walk = ba["walk"]
-    im.alpha_composite(personaje("doc", ba["x"], HIP, lt, alpha=alpha_b, walk=walk, aF=ba["aF"], aB=ba["aB"], head=ba["head"], expr=ba["expr"]))
-    im.alpha_composite(personaje("duque", DX, DHIP, lt, aF=aF_d, aB=aB_d, head=head_d, expr=exp_d, sentado=True))
-    over(im, base, 0, 0)
-    if mk:
-        marca(im, mk[0], mk[1], mk[3], mk[2], rondas=(acc in ("aviso", "rechazo")))
-    if ex_:
-        exclama(im, ex_[1], ex_[2], ex_[3], ex_[4])
+    if lejos:
+        lay = personaje("doc", 400, HIP, lt, walk=1.0, aF=24 * s9, aB=-24 * s9, head=-6, expr="neutral", lean=6)
+        lay = lay.resize((int(lay.width * 0.4), int(lay.height * 0.4)), Image.LANCZOS)
+        a_ = lejos[1]
+        lay.putalpha(lay.getchannel("A").point(lambda v: int(v * a_)))
+        over(im, lay, (lejos[0] - 400 * 0.4) * SS, (585 - HIP * 0.4) * SS)
+    if mostrar_doc and B["alpha"] > 0:
+        im.alpha_composite(personaje("doc", B["x"], HIP, lt, alpha=B["alpha"], walk=B["walk"], aF=B["aF"], aB=B["aB"], head=B["head"], expr=B["expr"],
+                                     habla=B["habla"], lean=B["lean"], oscuro=B["oscuro"]))
+    if mostrar_duque:
+        im.alpha_composite(personaje("duque", DX, DHIP, lt, aF=D["aF"], aB=D["aB"], head=D["head"], expr=D["expr"], sentado=True,
+                                     habla=D["habla"], lean=D["lean"], oscuro=D["oscuro"]))
+        over(im, base, 0, 0)
+        if mk:
+            marca(im, DX - 27, DHY + 12, lt, mk[0], rondas=mk[1])
+    for e in fx:
+        if e[0] == "exc":
+            exclama(im, e[1], e[2], e[3], e[4])
+        elif e[0] == "polvo":
+            polvo(im, e[1], e[2], e[3], e[4] if len(e) > 4 else 1)
+        elif e[0] == "sudor":
+            sudor(im, e[1], e[2], e[3])
+        elif e[0] == "vena":
+            vena(im, e[1], e[2], e[3])
     if burb:
         burbuja(im, burb[0], burb[1], burb[2], burb[3])
     if sc.get("etiqueta"):
@@ -1429,7 +1597,7 @@ def main():
     for e, (x, sr) in zip(escenas, clips):
         a0, a1 = trim_voz(x, sr)
         e["words"], e["starts"] = tiempos_palabras(e["voz"], a0, a1)
-        dur = OFF + len(x) / sr + (1.3 if e["ilu"] == "cierre" else 0.8)
+        dur = OFF + len(x) / sr + (0.9 if e["ilu"] == "cierre" else 0.8)
         e["start"], e["end"] = t, t + max(3.2, dur)
         t = e["end"]
     total = t
@@ -1485,7 +1653,7 @@ def main():
             # motion graphics: entrada con rebote, zoom lento de cámara y barrido de luz al cambiar de escena
             s = ((1.0 if sc["ilu"] == "cuento" else 0.80 + 0.20 * rebote(lt / 0.6))) * (1 + 0.045 * lt / max(1.0, sc["end"] - sc["start"]))
             ill = ill.resize((int(CW * k * s), int(CH * k * s)), Image.LANCZOS)
-            paste_center(f, ill, cy, al, dy=(0 if sc["ilu"] == "cuento" else (1 - ease(lt / 0.5)) * 70))
+            paste_center(f, ill, cy, al, dy=(0 if sc["ilu"] == "cuento" else (1 - ease(lt / 0.5)) * 70), cx=W // 2 + (int(16 * math.sin(lt * 0.7)) if sc["ilu"] == "cuento" else 0))
             if lt < 0.4:
                 f.alpha_composite(BARRIDO, (0, int(-160 + (H + 160) * ease(lt / 0.4))))
         d = ImageDraw.Draw(f)
