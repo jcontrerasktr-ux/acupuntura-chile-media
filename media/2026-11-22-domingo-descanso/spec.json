@@ -1,0 +1,56 @@
+{
+ "tag": "TIP DE DESCANSO",
+ "hook": "¿Cómo cierras tu *domingo* en la noche?",
+ "web": "acupuntura-chile.cl",
+ "voz_id": 28,
+ "cierre_texto": "Guarda y comparte esta historia",
+ "escenas": [
+  {
+   "voz": "Es domingo en la noche. ¿Cómo cierras el día antes de que parta la semana?",
+   "ilu": "tarjeta",
+   "icono": "moon",
+   "chip": "Domingo en la noche",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Según la medicina china, el día es yang, de actividad, y la noche es yin, de calma.",
+   "ilu": "yinyang",
+   "etiqueta": "Medicina china",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Primero, deja la pantalla un rato antes de acostarte.",
+   "ilu": "tarjeta",
+   "icono": "head",
+   "chip": "Menos pantalla",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Segundo, cena liviano y toma algo tibio, como una infusión suave.",
+   "ilu": "tarjeta",
+   "icono": "leaf",
+   "chip": "Cena liviana",
+   "fondo": "verde",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Tercero, haz cinco respiraciones lentas: inhala cuatro segundos y exhala seis.",
+   "ilu": "tarjeta",
+   "icono": "wave",
+   "chip": "5 respiraciones lentas",
+   "guia": "quieta"
+  },
+  {
+   "voz": "Son hábitos simples que pueden ayudar como apoyo. Si el insomnio es intenso, consulta a un profesional.",
+   "ilu": "tarjeta",
+   "icono": "moon",
+   "chip": "Rutina suave",
+   "guia": "saluda"
+  },
+  {
+   "voz": "Buen descanso y buena semana. Conoce más en AcupunturaChile.",
+   "ilu": "cierre"
+  }
+ ],
+ "voz_velocidad": 0.95
+}
