@@ -1,0 +1,13 @@
+{
+ "web": "acupuntura-chile.cl",
+ "laminas": [
+  {"tipo":"portada","tag":"DATO + GUÍA PARA GUARDAR","icono":"moon","titulo":"*3 de cada 10* adultos duermen menos de 7 horas","sub":"Desliza"},
+  {"tipo":"dato","tag":"DATO","numero":"3 de cada 10","tam":120,"unidad":"adultos","texto":"durmió menos de 7 horas en promedio en 2024, según una encuesta nacional de salud de Estados Unidos.","fuente":"NCHS, Data Brief 559 (abril 2026)","guia":"quieta"},
+  {"tipo":"dato","tag":"DATO","numero":"7 horas","tam":120,"unidad":"o más","texto":"es lo que recomienda la Academia Estadounidense de Medicina del Sueño para adultos cada 24 horas.","fuente":"AASM, citada por NCHS y CDC","guia":"saluda"},
+  {"tipo":"paso","n":1,"icono":"moon","titulo":"Horarios parecidos","texto":"Acuéstate y levántate a horas similares. Tu cuerpo agradece la rutina.","guia":"saluda"},
+  {"tipo":"paso","n":2,"icono":"wave","titulo":"Baja el ritmo","texto":"Dedica 15 minutos a respirar lento: inhala 4 segundos, exhala 6. Puede ayudarte a soltar el estrés del día.","guia":"quieta"},
+  {"tipo":"paso","n":3,"icono":"leaf","titulo":"Pantallas aparte","texto":"Deja el celular un rato antes de dormir y prueba una infusión suave sin cafeína.","guia":"saluda"},
+  {"tipo":"paso","n":4,"icono":"body","titulo":"Cuarto tranquilo","texto":"Oscuro, ventilado y sin ruido. Un entorno calmo puede ayudar a tu descanso.","guia":"quieta"},
+  {"tipo":"cierre","titulo":"Guárdalo y envíaselo a alguien que duerme mal","texto":"Si el problema de sueño es intenso, nuevo o persistente, consulta a un profesional de salud. En AcupunturaChile evaluamos tu caso y armamos un plan a tu medida.","guia":"quieta"}
+ ]
+}
