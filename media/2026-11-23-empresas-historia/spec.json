@@ -1,0 +1,17 @@
+{
+  "tag": "EMPRESAS · BIENESTAR",
+  "hook": "¿Tu equipo pasa *8 horas* sentado?",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Tu equipo pasa gran parte del día sentado frente al computador?", "ilu": "tarjeta", "icono": "body", "chip": "EMPRESAS", "guia": "saluda"},
+    {"voz": "En AcupunturaChile también cuidamos el bienestar de los equipos de trabajo.", "ilu": "tarjeta", "icono": "leaf", "chip": "Bienestar laboral", "fondo": "verde", "guia": "quieta"},
+    {"voz": "Armamos jornadas y pausas activas para que tu equipo se mueva y se relaje.", "ilu": "movimiento", "etiqueta": "Pausas activas", "guia": "quieta"},
+    {"voz": "También puedes sumar masaje terapéutico y kinesiología, como apoyo a la salud del equipo.", "ilu": "tarjeta", "icono": "wave", "chip": "Masaje · Kinesiología", "fondo": "calido", "guia": "saluda"},
+    {"voz": "Cada actividad se adapta al tamaño y a las necesidades de tu empresa.", "ilu": "tarjeta", "icono": "curve", "chip": "A tu medida", "guia": "quieta"},
+    {"voz": "Un equipo que se cuida puede sentirse con más calma y energía en su jornada.", "ilu": "tarjeta", "icono": "moon", "chip": "Equipos que se cuidan", "fondo": "verde", "guia": "saluda"},
+    {"voz": "Escríbenos desde acupuntura-chile.cl y conversemos un programa para tu empresa.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
