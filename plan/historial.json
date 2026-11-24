@@ -144,6 +144,13 @@
       "subtipo": "dato+guia",
       "id_tema": "rutina-sueno",
       "resultado": "publicado media_id 17991708152878455 (8 láminas, URLs raw)"
+    },
+    {
+      "fecha": "2026-11-24",
+      "tipo": "historia",
+      "subtipo": "mito-verdad",
+      "id_tema": "mito-solo-dolor",
+      "resultado": "publicado media_id 17875437327641139 (video 43,9 s, URL GitHub Pages)"
     }
   ]
 }
