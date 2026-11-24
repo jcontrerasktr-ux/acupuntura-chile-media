@@ -1,0 +1,17 @@
+{
+ "tag": "MITO O VERDAD",
+ "hook": "¿Mito o verdad? *La acupuntura* es solo para el dolor",
+ "web": "acupuntura-chile.cl",
+ "voz_id": 28,
+ "cierre_texto": "Guarda y comparte esta historia",
+ "escenas": [
+  {"voz": "Mito o verdad. Hoy hablamos de para qué se usa la acupuntura.", "ilu": "tarjeta", "icono": "leaf", "chip": "MITO O VERDAD", "guia": "saluda"},
+  {"voz": "Mito: la acupuntura sirve solo para el dolor de espalda o de cabeza.", "ilu": "tarjeta", "icono": "body", "chip": "MITO", "callout": "Solo para el dolor", "callout_tipo": "no", "guia": "quieta"},
+  {"voz": "Verdad: el dolor es una de las razones más comunes para consultar, pero no la única.", "ilu": "tarjeta", "icono": "head", "chip": "VERDAD", "callout": "Una de varias razones", "callout_tipo": "ok", "guia": "saluda"},
+  {"voz": "Según la medicina china, se busca el equilibrio de todo el cuerpo, no solo de una molestia.", "ilu": "yinyang", "etiqueta": "Medicina china", "guia": "quieta"},
+  {"voz": "Por eso muchas personas la consultan también por estrés, sueño o ansiedad, como apoyo complementario.", "ilu": "tarjeta", "icono": "moon", "chip": "VERDAD", "callout": "Estrés y descanso", "callout_tipo": "ok", "fondo": "verde", "guia": "saluda"},
+  {"voz": "No reemplaza la atención médica. Si tu síntoma es intenso o nuevo, consulta a un profesional de salud.", "ilu": "tarjeta", "icono": "wave", "chip": "Importante", "guia": "quieta"},
+  {"voz": "Cada persona responde distinto. Escríbenos y evaluamos tu caso en AcupunturaChile.", "ilu": "cierre"}
+ ],
+ "voz_velocidad": 0.95
+}
