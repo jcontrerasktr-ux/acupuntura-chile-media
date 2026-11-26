@@ -1,0 +1,17 @@
+{
+  "tag": "TIP DEL JUEVES",
+  "hook": "Una pausa de *1 minuto* para soltar el estrés",
+  "web": "acupuntura-chile.cl",
+  "voz_id": 28,
+  "cierre_texto": "Guarda y comparte esta historia",
+  "escenas": [
+    {"voz": "¿Sientes el día acelerado? Te cuento una pausa de un minuto, en tres pasos simples.", "ilu": "tarjeta", "icono": "wave", "chip": "Tip del jueves", "guia": "saluda"},
+    {"voz": "Paso uno: suelta el celular, apoya los pies en el suelo y deja caer los hombros.", "ilu": "tarjeta", "icono": "body", "chip": "Paso 1 · Suelta", "fondo": "verde", "guia": "quieta"},
+    {"voz": "Paso dos: inhala por la nariz contando cuatro, y exhala lento por la boca contando seis.", "ilu": "tarjeta", "icono": "wave", "chip": "Paso 2 · Respira", "guia": "saluda"},
+    {"voz": "Paso tres: repite cinco veces, con calma, y nota cómo se siente tu cuerpo al terminar.", "ilu": "tarjeta", "icono": "moon", "chip": "Paso 3 · Repite", "fondo": "verde", "guia": "quieta"},
+    {"voz": "Puedes hacerla entre reuniones o antes de dormir. Puede ayudar a bajar el ritmo del día.", "ilu": "tarjeta", "icono": "leaf", "chip": "Un hábito simple", "guia": "saluda"},
+    {"voz": "Si tu estrés o tu insomnio son intensos o nuevos, consulta a un profesional de salud.", "ilu": "tarjeta", "icono": "head", "chip": "Consulta si es intenso", "guia": "quieta"},
+    {"voz": "Cada persona responde distinto. Agenda tu hora en AcupunturaChile.", "ilu": "cierre"}
+  ],
+  "voz_velocidad": 0.95
+}
