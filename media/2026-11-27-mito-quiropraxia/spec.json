@@ -1,0 +1,17 @@
+{
+ "tag": "QUIROPRAXIA · MITO O VERDAD",
+ "hook": "¿La quiropraxia es solo *tronar* la espalda?",
+ "web": "acupuntura-chile.cl",
+ "voz_id": 28,
+ "cierre_texto": "Guárdalo y envíaselo a alguien con la espalda cargada",
+ "escenas": [
+  {"voz": "¿La quiropraxia es solo tronar la espalda? Mito o verdad.", "ilu": "tarjeta", "icono": "body", "chip": "MITO O VERDAD", "guia": "saluda"},
+  {"voz": "Mito: la quiropraxia es solo hacer sonar los huesos.", "ilu": "tarjeta", "icono": "curve", "chip": "MITO", "callout": "Solo tronar huesos", "callout_tipo": "no", "guia": "quieta"},
+  {"voz": "Verdad: parte de una evaluación de la columna y las articulaciones, y de cómo te mueves.", "ilu": "columna", "regiones": [["7 cervicales", 0, 6], ["12 dorsales", 7, 18], ["5 lumbares", 19, 23]], "callout": "Primero se evalúa", "callout_tipo": "ok"},
+  {"voz": "Mito: si no suena, no sirvió.", "ilu": "tarjeta", "icono": "wave", "chip": "MITO", "callout": "El sonido no es la meta", "callout_tipo": "no", "fondo": "calido", "guia": "quieta"},
+  {"voz": "Verdad: el sonido no es el objetivo. Las técnicas se adaptan a cada persona.", "ilu": "tarjeta", "icono": "body", "chip": "VERDAD", "callout": "Técnica a tu medida", "callout_tipo": "ok", "fondo": "verde", "guia": "saluda"},
+  {"voz": "Es un apoyo complementario y no reemplaza la atención médica. Si tu dolor es intenso o nuevo, consulta.", "ilu": "tarjeta", "icono": "leaf", "chip": "Importante", "guia": "quieta"},
+  {"voz": "Guárdalo y envíaselo a alguien con la espalda cargada.", "ilu": "cierre"}
+ ],
+ "voz_velocidad": 0.95
+}
